@@ -1,5 +1,11 @@
+import Simulator from "./components/Simulator";
+
 function App() {
-  return <></>;
+  return (
+    <>
+      <Simulator />
+    </>
+  );
 }
 
 export default App;

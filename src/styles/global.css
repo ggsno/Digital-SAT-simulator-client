@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "main";
+  src: url("/font/main.ttf");
+}
+
+@font-face {
+  font-family: "question";
+  src: url("/font/question.ttf");
+}
+
+body {
+  font-family: "main";
+  font-size: 16px;
+}
