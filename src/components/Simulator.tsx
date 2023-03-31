@@ -1,13 +1,10 @@
-import { useRef, useState } from "react";
-import Desmos from "desmos";
+import { useState } from "react";
+import { GraphingCalculator } from "desmos-react";
 
 export default function Simulator() {
   const [isMarkWrong, setIsMarkWrong] = useState(false);
   const [isMarkReview, setIsMarkReview] = useState(false);
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState<null | Boolean>(
-    null
-  );
-  const calculatorRef = useRef(null);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const title = "Section 1, Module 1: Reading and Writing";
   const passage = `In recommending Bao Phi's collection <i>Song I Sing</i> , a librarian
@@ -17,28 +14,33 @@ export default function Simulator() {
   const question = `Which choice <b>completes</b> the text with the most logical and precise
   word or phrase?`;
 
-  const handleClick = () => {
-    if (isCalculatorOpen === null) {
-      if (!calculatorRef.current)
-        throw new Error("calculator ref is undefined");
-      Desmos.GraphingCalculator(calculatorRef.current);
-      setIsCalculatorOpen(true);
-    } else setIsCalculatorOpen(!isCalculatorOpen);
+  const handleCalculatorClick = () => {
+    setIsCalculatorOpen(!isCalculatorOpen);
+  };
+
+  const handleMarkWrongClick = () => {
+    setIsMarkWrong(!isMarkWrong);
+  };
+
+  const handleMarkReviewClick = () => {
+    setIsMarkReview(!isMarkReview);
   };
 
   return (
     <>
-      <div
-        ref={calculatorRef}
-        className={`fixed top-20 left-0 h-[90vh] w-full ${
-          isCalculatorOpen ? "block" : "hidden"
-        }`}
+      <GraphingCalculator
+        attributes={{
+          className: `calculator fixed top-20 left-0 h-[90vh] w-full ${
+            isCalculatorOpen ? "block" : "hidden"
+          }
+      `,
+        }}
       />
       <header className="grid grid-cols-5 w-100vw px-10 py-5 border-dashed border-b-2 border-gray mb-2">
         <h1 className="col-span-2 text-xl truncate hover:text-clip">{title}</h1>
         <div className="text-2xl self-center justify-self-center">0:00</div>
         <button
-          onClick={handleClick}
+          onClick={handleCalculatorClick}
           className={`col-span-2 self-center justify-self-end text-sm border-b-2 ${
             isCalculatorOpen ? "border-black" : "border-transparent"
           }`}
@@ -65,7 +67,7 @@ export default function Simulator() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsMarkReview(!isMarkReview)}
+                  onClick={handleMarkReviewClick}
                   className={`${
                     isMarkReview
                       ? "bg-markReviewClicked font-bold"
@@ -77,7 +79,7 @@ export default function Simulator() {
               </div>
               <button
                 type="button"
-                onClick={() => setIsMarkWrong(!isMarkWrong)}
+                onClick={handleMarkWrongClick}
                 className={`${
                   isMarkWrong ? "bg-markWrongClicked" : "bg-markWrong"
                 } bg-contain w-7 h-7 bg-no-repeat text-transparent mr-2`}
