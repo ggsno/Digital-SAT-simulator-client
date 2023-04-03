@@ -36,7 +36,7 @@ export default function Question({
 
   return (
     <>
-      <div className="grid grid-cols-2 h-[80vh]">
+      <div className={`grid grid-cols-2 h-[calc(100vh_-_173px)]`}>
         <p
           className="font-question p-9 max-w-2xl justify-self-center overflow-auto"
           dangerouslySetInnerHTML={{ __html: passage }}
