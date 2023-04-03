@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil";
+import { atom, selectorFamily } from "recoil";
 
 export const markReviewListState = atom<{ ids: string[] }>({
   key: "MarkReviewList",
@@ -25,4 +25,9 @@ export const optionEliminatorState = atom<{
     isActive: false,
     list: [],
   },
+});
+
+export const isCalulatorOpenedState = atom({
+  key: "IsCalculatorOpened",
+  default: false,
 });

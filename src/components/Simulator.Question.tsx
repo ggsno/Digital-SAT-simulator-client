@@ -3,20 +3,22 @@ import {
   isMarkedReviewSelector,
   markReviewListState,
   optionEliminatorState,
-} from "./Question.atoms";
+} from "./Simulator.atoms";
 
-export default function Question({
-  id,
-  passage,
-  question,
-}: {
+type Props = {
   id: string;
   passage: string;
   question: string;
-}) {
+};
+
+export default function Question(props: Props) {
+  const { id, passage, question } = props;
+
   const isMarkReview = useRecoilValue(isMarkedReviewSelector(id));
+
   const [markReviewList, setMarkReviewList] =
     useRecoilState(markReviewListState);
+
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
