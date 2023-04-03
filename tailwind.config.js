@@ -7,8 +7,8 @@ export default {
       question: "question",
     },
     backgroundImage: {
-      markWrong: "url('/image/markWrong.png')",
-      markWrongClicked: "url('/image/markWrong-clicked.png')",
+      optionEliminator: "url('/image/optionEliminator.png')",
+      optionEliminatorClicked: "url('/image/optionEliminator-clicked.png')",
       markReview: "url('/image/markReview.png')",
       markReviewClicked: "url('/image/markReview-clicked.png')",
     },
