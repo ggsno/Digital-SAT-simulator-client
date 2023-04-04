@@ -19,6 +19,7 @@ export default function Simulator() {
     question: `Which choice <b>completes</b> the text with the most logical and precise
     word or phrase?`,
     userName: "Gangsan O",
+    choices: ["scholary", "melodic", "jarring", "personal"],
   };
 
   const {
@@ -28,6 +29,7 @@ export default function Simulator() {
     passage,
     question,
     userName,
+    choices,
   } = TEMP;
 
   return (
@@ -42,7 +44,12 @@ export default function Simulator() {
       />
       <Header title={title} />
       <hr className="border-dashed border-t-2 border-gray mb-2" />
-      <Question id={questionIndex} passage={passage} question={question} />
+      <Question
+        id={questionIndex}
+        passage={passage}
+        question={question}
+        choices={choices}
+      />
       <hr className="border-dashed border-t-2 border-gray mt-2" />
       <Footer
         userName={userName}

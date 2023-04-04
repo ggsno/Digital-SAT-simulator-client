@@ -9,10 +9,11 @@ type Props = {
   id: string;
   passage: string;
   question: string;
+  choices: string[];
 };
 
 export default function Question(props: Props) {
-  const { id, passage, question } = props;
+  const { id, passage, question, choices } = props;
 
   const isMarkReview = useRecoilValue(isMarkedReviewSelector(id));
 
@@ -45,7 +46,7 @@ export default function Question(props: Props) {
         />
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl">
-            <div className="flex justify-between bg-gray-light pb-0.5 border-b-2 border-dashed border-gray h-8 mb-2">
+            <div className="flex justify-between bg-gray-light pb-0.5 h-8">
               <div className="flex">
                 <div className="bg-black text-white w-7 flex justify-center items-center text-xl">
                   {id}
@@ -74,10 +75,35 @@ export default function Question(props: Props) {
                 option eliminator
               </button>
             </div>
-            <div
-              className="font-question"
-              dangerouslySetInnerHTML={{ __html: question }}
-            />
+            <hr className="border-t-2 border-dashed border-gray mb-2" />
+
+            <fieldset className="font-question">
+              <legend dangerouslySetInnerHTML={{ __html: question }} />
+              {choices.map((choice, index) => (
+                <li key={`choice${index}`} className="list-none">
+                  <input
+                    type="radio"
+                    name="choice"
+                    id={`choice${index}`}
+                    className={`peer sr-only`}
+                  />
+                  <label
+                    className={`flex px-2 mt-4 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
+                    border-black peer-checked:border-blue peer-checked:border-2 \
+                      peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white`}
+                    htmlFor={`choice${index}`}
+                  >
+                    <div
+                      className={`font-main mr-4 border-2 border-gray-dark rounded-full \
+                    w-6 h-6 text-center leading-6`}
+                    >
+                      {["A", "B", "C", "D"][index]}
+                    </div>
+                    {choice}
+                  </label>
+                </li>
+              ))}
+            </fieldset>
           </div>
         </div>
       </div>
