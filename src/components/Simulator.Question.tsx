@@ -1,9 +1,7 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  isMarkedReviewSelector,
-  markReviewListState,
-  optionEliminatorState,
-} from "./Simulator.atoms";
+import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { optionEliminatorState } from "./Simulator.atoms";
+import Toolbox from "./Simulator.Question.Toolbox";
 
 type Props = {
   id: string;
@@ -15,26 +13,44 @@ type Props = {
 export default function Question(props: Props) {
   const { id, passage, question, choices } = props;
 
-  const isMarkReview = useRecoilValue(isMarkedReviewSelector(id));
-
-  const [markReviewList, setMarkReviewList] =
-    useRecoilState(markReviewListState);
+  const [markAnswerIndex, setMarkAnswerIndex] = useState<number | null>(null);
 
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
 
-  const handleMarkWrongClick = () => {
-    setOptionEliminator({
-      ...optionEliminator,
-      isActive: !optionEliminator.isActive,
-    });
-  };
-
-  const handleMarkReviewClick = () => {
-    if (isMarkReview)
-      setMarkReviewList({ ids: markReviewList.ids.filter((e) => e !== id) });
-    else setMarkReviewList({ ids: [...markReviewList.ids, id] });
+  const handleOptionEliminator = (action: "ADD" | "REMOVE", index: number) => {
+    const { list } = optionEliminator;
+    switch (action) {
+      case "ADD":
+        if (list?.[id]) {
+          setOptionEliminator({
+            ...optionEliminator,
+            list: { ...list, [id]: [...list[id], index] },
+          });
+        } else {
+          setOptionEliminator({
+            ...optionEliminator,
+            list: { ...list, [id]: [index] },
+          });
+        }
+        break;
+      case "REMOVE":
+        if (list?.[id].includes(index)) {
+          setOptionEliminator({
+            ...optionEliminator,
+            list: {
+              ...list,
+              [id]: list[id].filter((e) => e !== index),
+            },
+          });
+        } else {
+          throw new Error("cannot remove option eliminator");
+        }
+        break;
+      default:
+        throw new Error("undefined action: handleOptionEliminator");
+    }
   };
 
   return (
@@ -46,61 +62,80 @@ export default function Question(props: Props) {
         />
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl">
-            <div className="flex justify-between bg-gray-light pb-0.5 h-8">
-              <div className="flex">
-                <div className="bg-black text-white w-7 flex justify-center items-center text-xl">
-                  {id}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleMarkReviewClick}
-                  className={`${
-                    isMarkReview
-                      ? "bg-markReviewClicked font-bold"
-                      : "bg-markReview"
-                  } bg-contain bg-no-repeat w-40 ml-4 my-1 `}
-                >
-                  Mark for Review
-                </button>
-              </div>
-              <button
-                type="button"
-                onClick={handleMarkWrongClick}
-                className={`${
-                  optionEliminator.isActive
-                    ? "bg-optionEliminatorClicked"
-                    : "bg-optionEliminator"
-                } bg-contain w-7 h-7 bg-no-repeat text-transparent mr-2`}
-              >
-                option eliminator
-              </button>
-            </div>
+            <Toolbox id={id} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
             <fieldset className="font-question">
               <legend dangerouslySetInnerHTML={{ __html: question }} />
               {choices.map((choice, index) => (
-                <li key={`choice${index}`} className="list-none">
+                <li
+                  key={`choice${index}`}
+                  className="list-none flex mt-4 items-center"
+                >
                   <input
                     type="radio"
                     name="choice"
                     id={`choice${index}`}
                     className={`peer sr-only`}
+                    onChange={() => {
+                      setMarkAnswerIndex(index);
+                      if (optionEliminator.list?.[id].includes(index))
+                        handleOptionEliminator("REMOVE", index);
+                    }}
+                    checked={index === markAnswerIndex}
                   />
                   <label
-                    className={`flex px-2 mt-4 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
+                    className={`grow flex px-2 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
                     border-black peer-checked:border-blue peer-checked:border-2 \
-                      peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white`}
+                      peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white\
+                      ${
+                        optionEliminator.isActive &&
+                        optionEliminator.list?.[id].includes(index)
+                          ? "text-gray"
+                          : null
+                      }`}
                     htmlFor={`choice${index}`}
                   >
                     <div
-                      className={`font-main mr-4 border-2 border-gray-dark rounded-full \
+                      className={`font-main mr-4 border-2 ${
+                        optionEliminator.isActive &&
+                        optionEliminator.list?.[id].includes(index)
+                          ? "border-gray"
+                          : "border-gray-dark"
+                      } rounded-full \
                     w-6 h-6 text-center leading-6`}
                     >
                       {["A", "B", "C", "D"][index]}
                     </div>
                     {choice}
                   </label>
+
+                  {optionEliminator.isActive ? (
+                    <div className="w-12 text-center">
+                      {optionEliminator.list?.[id].includes(index) ? (
+                        <button
+                          onClick={() => {
+                            handleOptionEliminator("REMOVE", index);
+                          }}
+                          className="font-main underline"
+                        >
+                          Undo
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            if (index === markAnswerIndex)
+                              setMarkAnswerIndex(null);
+                            handleOptionEliminator("ADD", index);
+                          }}
+                          className={`font-main border border-gray-dark rounded-full \
+                      w-5 h-5 text-center leading-5 line-through`}
+                        >
+                          {["A", "B", "C", "D"][index]}
+                        </button>
+                      )}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </fieldset>

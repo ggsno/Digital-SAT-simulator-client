@@ -18,12 +18,12 @@ export const isMarkedReviewSelector = selectorFamily({
 
 export const optionEliminatorState = atom<{
   isActive: boolean;
-  list: { questionId: string; eliminatedIds: string[] }[];
+  list: { [questionId: string]: number[] } | null;
 }>({
   key: "OptionEliminator",
   default: {
     isActive: false,
-    list: [],
+    list: null,
   },
 });
 
