@@ -1,33 +1,56 @@
 import { atom, selectorFamily } from "recoil";
 
-export const markReviewListState = atom<{ ids: string[] }>({
+export const markReviewListState = atom<{ indexList: number[] }>({
   key: "MarkReviewList",
   default: {
-    ids: [],
+    indexList: [],
   },
 });
 
 export const isMarkedReviewSelector = selectorFamily({
   key: "IsMarkedReviewSelector",
   get:
-    (id: string) =>
+    (index: number) =>
     ({ get }) => {
-      return get(markReviewListState).ids.includes(id);
+      return get(markReviewListState).indexList.includes(index);
     },
 });
 
 export const optionEliminatorState = atom<{
   isActive: boolean;
-  list: { [questionId: string]: number[] } | null;
+  eliminatedOptionsList: number[][];
 }>({
   key: "OptionEliminator",
   default: {
     isActive: false,
-    list: null,
+    eliminatedOptionsList: [],
   },
 });
 
 export const isCalulatorOpenedState = atom({
   key: "IsCalculatorOpened",
   default: false,
+});
+
+export const examState = atom<{
+  id: string;
+  title: string;
+  module: {
+    passage?: string;
+    question: string;
+    choices?: string[];
+  }[];
+} | null>({
+  key: "Exam",
+  default: null,
+});
+
+export const questionIndexState = atom({
+  key: "QuestionIndex",
+  default: 0,
+});
+
+export const answerState = atom<(string | null)[]>({
+  key: "Answer",
+  default: [],
 });

@@ -1,49 +1,77 @@
-import { useState } from "react";
-import { useRecoilState } from "recoil";
-import { optionEliminatorState } from "./Simulator.atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  answerState,
+  optionEliminatorState,
+  questionIndexState,
+} from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
 
 type Props = {
-  id: string;
-  passage: string;
+  passage?: string;
   question: string;
-  choices: string[];
+  choices?: string[];
 };
 
 export default function Question(props: Props) {
-  const { id, passage, question, choices } = props;
-
-  const [markAnswerIndex, setMarkAnswerIndex] = useState<number | null>(null);
-
+  const { passage, question, choices } = props;
+  const questionIndex = useRecoilValue(questionIndexState);
+  const [answers, setAnswers] = useRecoilState(answerState);
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
 
-  const handleOptionEliminator = (action: "ADD" | "REMOVE", index: number) => {
-    const { list } = optionEliminator;
+  const addAnswer = (choiceIndex: number) => {
+    const newAnswers = answers.slice();
+    newAnswers.splice(questionIndex, 1, convertToObjectiveChoice(choiceIndex));
+    setAnswers(newAnswers);
+  };
+
+  const resetAnswer = () => {
+    const newAnswers = answers.slice();
+    newAnswers.splice(questionIndex, 1, null);
+    setAnswers(newAnswers);
+  };
+
+  const handleOptionEliminator = (
+    action: "ADD" | "REMOVE",
+    choiceIndex: number
+  ) => {
+    const { eliminatedOptionsList } = optionEliminator;
+    const setEliminatedOptionsList = (newEliminatedOptionsList: number[][]) => {
+      setOptionEliminator({
+        ...optionEliminator,
+        eliminatedOptionsList: newEliminatedOptionsList,
+      });
+    };
     switch (action) {
       case "ADD":
-        if (list?.[id]) {
-          setOptionEliminator({
-            ...optionEliminator,
-            list: { ...list, [id]: [...list[id], index] },
-          });
+        if (eliminatedOptionsList[questionIndex]) {
+          const newEliminatedOptionsList = eliminatedOptionsList.slice();
+          const newEliminatedOptions =
+            eliminatedOptionsList[questionIndex].concat(choiceIndex);
+          newEliminatedOptionsList.splice(
+            questionIndex,
+            1,
+            newEliminatedOptions
+          );
+          setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
-          setOptionEliminator({
-            ...optionEliminator,
-            list: { ...list, [id]: [index] },
-          });
+          const newEliminatedOptionsList = eliminatedOptionsList.slice();
+          newEliminatedOptionsList[questionIndex] = [choiceIndex];
+          setEliminatedOptionsList(newEliminatedOptionsList);
         }
         break;
       case "REMOVE":
-        if (list?.[id].includes(index)) {
-          setOptionEliminator({
-            ...optionEliminator,
-            list: {
-              ...list,
-              [id]: list[id].filter((e) => e !== index),
-            },
-          });
+        if (eliminatedOptionsList[questionIndex].includes(choiceIndex)) {
+          const newEliminatedOptionsList = eliminatedOptionsList.slice();
+
+          const newEliminatedOptions = eliminatedOptionsList[
+            questionIndex
+          ].filter((e) => e !== choiceIndex);
+
+          newEliminatedOptionsList[questionIndex] = newEliminatedOptions;
+
+          setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
           throw new Error("cannot remove option eliminator");
         }
@@ -53,91 +81,130 @@ export default function Question(props: Props) {
     }
   };
 
+  const convertToObjectiveChoice = (index: number) =>
+    ["A", "B", "C", "D"][index];
+
+  const convertFromObjectiveChoice = (choice: string | null) => {
+    switch (choice) {
+      case "A":
+        return 0;
+      case "B":
+        return 1;
+      case "C":
+        return 2;
+      case "D":
+        return 3;
+      default:
+        return choice;
+    }
+  };
+
+  const isEliminatorInclude = (choiceIndex: number) =>
+    optionEliminator.eliminatedOptionsList[questionIndex]?.includes(
+      choiceIndex
+    );
+
   return (
     <>
-      <div className={`grid grid-cols-2 h-[calc(100vh_-_173px)]`}>
-        <p
-          className="font-question p-9 max-w-2xl justify-self-center overflow-auto"
-          dangerouslySetInnerHTML={{ __html: passage }}
-        />
+      <div
+        className={`${
+          passage ? "grid grid-cols-2" : null
+        } h-[calc(100vh_-_173px)]`}
+      >
+        {passage && (
+          <p
+            className="font-question p-9 max-w-2xl justify-self-center overflow-auto"
+            dangerouslySetInnerHTML={{ __html: passage }}
+          />
+        )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl">
-            <Toolbox id={id} />
+            <Toolbox index={questionIndex} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
             <fieldset className="font-question">
               <legend dangerouslySetInnerHTML={{ __html: question }} />
-              {choices.map((choice, index) => (
-                <li
-                  key={`choice${index}`}
-                  className="list-none flex mt-4 items-center"
-                >
-                  <input
-                    type="radio"
-                    name="choice"
-                    id={`choice${index}`}
-                    className={`peer sr-only`}
-                    onChange={() => {
-                      setMarkAnswerIndex(index);
-                      if (optionEliminator.list?.[id].includes(index))
-                        handleOptionEliminator("REMOVE", index);
-                    }}
-                    checked={index === markAnswerIndex}
-                  />
-                  <label
-                    className={`grow flex px-2 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
+              {!choices
+                ? null
+                : choices.map((choice, choiceIndex) => (
+                    <li
+                      key={`choice${choiceIndex}`}
+                      className="list-none flex mt-4 items-center"
+                    >
+                      <input
+                        type="radio"
+                        name="choice"
+                        id={`choice${choiceIndex}`}
+                        checked={
+                          convertFromObjectiveChoice(answers[questionIndex]) ===
+                          choiceIndex
+                        }
+                        onChange={() => {
+                          addAnswer(choiceIndex);
+                          if (isEliminatorInclude(choiceIndex))
+                            handleOptionEliminator("REMOVE", choiceIndex);
+                        }}
+                        className={`peer sr-only`}
+                      />
+                      <label
+                        className={`grow flex px-2 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
                     border-black peer-checked:border-blue peer-checked:border-2 \
                       peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white\
                       ${
                         optionEliminator.isActive &&
-                        optionEliminator.list?.[id].includes(index)
+                        isEliminatorInclude(choiceIndex)
                           ? "text-gray"
                           : null
                       }`}
-                    htmlFor={`choice${index}`}
-                  >
-                    <div
-                      className={`font-main mr-4 border-2 ${
-                        optionEliminator.isActive &&
-                        optionEliminator.list?.[id].includes(index)
-                          ? "border-gray"
-                          : "border-gray-dark"
-                      } rounded-full \
+                        htmlFor={`choice${choiceIndex}`}
+                      >
+                        <div
+                          className={`font-main mr-4 border-2 ${
+                            optionEliminator.isActive &&
+                            isEliminatorInclude(choiceIndex)
+                              ? "border-gray"
+                              : "border-gray-dark"
+                          } rounded-full \
                     w-6 h-6 text-center leading-6`}
-                    >
-                      {["A", "B", "C", "D"][index]}
-                    </div>
-                    {choice}
-                  </label>
+                        >
+                          {convertToObjectiveChoice(choiceIndex)}
+                        </div>
+                        {choice}
+                      </label>
 
-                  {optionEliminator.isActive ? (
-                    <div className="w-12 text-center">
-                      {optionEliminator.list?.[id].includes(index) ? (
-                        <button
-                          onClick={() => {
-                            handleOptionEliminator("REMOVE", index);
-                          }}
-                          className="font-main underline"
-                        >
-                          Undo
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            if (index === markAnswerIndex)
-                              setMarkAnswerIndex(null);
-                            handleOptionEliminator("ADD", index);
-                          }}
-                          className={`font-main border border-gray-dark rounded-full \
+                      {optionEliminator.isActive ? (
+                        <div className="w-12 text-center">
+                          {isEliminatorInclude(choiceIndex) ? (
+                            <button
+                              onClick={() => {
+                                handleOptionEliminator("REMOVE", choiceIndex);
+                              }}
+                              className="font-main underline"
+                            >
+                              Undo
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                if (
+                                  choiceIndex ===
+                                  convertFromObjectiveChoice(
+                                    answers[questionIndex]
+                                  )
+                                )
+                                  resetAnswer();
+                                handleOptionEliminator("ADD", choiceIndex);
+                              }}
+                              className={`font-main border border-gray-dark rounded-full \
                       w-5 h-5 text-center leading-5 line-through`}
-                        >
-                          {["A", "B", "C", "D"][index]}
-                        </button>
-                      )}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
+                            >
+                              {convertToObjectiveChoice(choiceIndex)}
+                            </button>
+                          )}
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
             </fieldset>
           </div>
         </div>

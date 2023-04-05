@@ -6,13 +6,13 @@ import {
 } from "./Simulator.atoms";
 
 type Props = {
-  id: string;
+  index: number;
 };
 
 export default function Toolbox(props: Props) {
-  const { id } = props;
+  const { index } = props;
 
-  const isMarkReview = useRecoilValue(isMarkedReviewSelector(id));
+  const isMarkReview = useRecoilValue(isMarkedReviewSelector(index));
 
   const [markReviewList, setMarkReviewList] =
     useRecoilState(markReviewListState);
@@ -30,8 +30,10 @@ export default function Toolbox(props: Props) {
 
   const handleMarkReviewClick = () => {
     if (isMarkReview)
-      setMarkReviewList({ ids: markReviewList.ids.filter((e) => e !== id) });
-    else setMarkReviewList({ ids: [...markReviewList.ids, id] });
+      setMarkReviewList({
+        indexList: markReviewList.indexList.filter((e) => e !== index),
+      });
+    else setMarkReviewList({ indexList: [...markReviewList.indexList, index] });
   };
 
   return (
@@ -39,7 +41,7 @@ export default function Toolbox(props: Props) {
       <div className="flex justify-between bg-gray-light pb-0.5 h-8">
         <div className="flex">
           <div className="bg-black text-white w-7 flex justify-center items-center text-xl">
-            {id}
+            {index + 1}
           </div>
           <button
             type="button"
