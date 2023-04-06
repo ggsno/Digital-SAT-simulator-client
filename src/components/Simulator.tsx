@@ -10,6 +10,7 @@ import {
   examState,
   answerState,
 } from "./Simulator.atoms";
+import Review from "./Simulator.Review";
 
 export default function Simulator() {
   const isCalculatorOpen = useRecoilValue(isCalulatorOpenedState);
@@ -38,11 +39,15 @@ export default function Simulator() {
       />
       <Header title={title} />
       <hr className="border-dashed border-t-2 border-gray mb-2" />
-      <Question
-        passage={module[questionIndex].passage}
-        question={module[questionIndex].question}
-        choices={module[questionIndex].choices}
-      />
+      {questionIndex < module.length ? (
+        <Question
+          passage={module[questionIndex].passage}
+          question={module[questionIndex].question}
+          choices={module[questionIndex].choices}
+        />
+      ) : (
+        <Review />
+      )}
       <hr className="border-dashed border-t-2 border-gray mt-2" />
       <Footer userName={userName} totalQuestionCount={totalQuestionCount} />
     </>

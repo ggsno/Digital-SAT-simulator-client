@@ -9,7 +9,7 @@ import {
 export default function Navigator({
   navigateCallback,
 }: {
-  navigateCallback: VoidFunction;
+  navigateCallback?: VoidFunction;
 }) {
   const exam = useRecoilValue(examState);
   const forReview = useRecoilValue(forReviewState);
@@ -38,7 +38,7 @@ export default function Navigator({
               type="button"
               onClick={() => {
                 setQuestionIndex(index);
-                navigateCallback();
+                navigateCallback && navigateCallback();
               }}
               key={`navitem${number}`}
               className={`relative font-bold text-xl w-7 h-7 mr-4 mb-6 ${
@@ -54,7 +54,7 @@ export default function Navigator({
                 <img
                   src="image/review_icon_bgwhite.png"
                   alt="review"
-                  className="absolute w-4 h-4 left-5 top-[-0.5rem]"
+                  className="absolute w-4 h-4 right-[-0.5rem] top-[-0.5rem]"
                 />
               )}
               {questionIndex === index && (

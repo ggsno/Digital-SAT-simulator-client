@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useRecoilValue } from "recoil";
-import { examState } from "./Simulator.atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { examState, questionIndexState } from "./Simulator.atoms";
 import Navigator from "./Simulator.Navigator";
 
 export default function Popup({
@@ -12,10 +12,10 @@ export default function Popup({
   popupButtonRef: React.MutableRefObject<HTMLDivElement | null>;
 }) {
   const [isPopupOpened, setIsPopupOpened] = popupState;
+  const setQuestionIndex = useSetRecoilState(questionIndexState);
   const exam = useRecoilValue(examState);
   if (!exam) throw new Error("no exam value at Footer component");
   const { title } = exam;
-
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -83,6 +83,7 @@ export default function Popup({
               type="button"
               onClick={() => {
                 setIsPopupOpened(false);
+                setQuestionIndex(exam.module.length);
               }}
               className="text-blue font-bold text-sm border border-blue rounded-full px-4 py-1"
             >
@@ -94,16 +95,4 @@ export default function Popup({
       )}
     </>
   );
-}
-
-function useIsFirstRender(): boolean {
-  const isFirst = useRef(true);
-
-  if (isFirst.current) {
-    isFirst.current = false;
-
-    return true;
-  }
-
-  return isFirst.current;
 }
