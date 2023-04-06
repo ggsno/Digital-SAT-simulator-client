@@ -1,7 +1,7 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   isMarkedReviewSelector,
-  markReviewListState,
+  forReviewState,
   optionEliminatorState,
 } from "./Simulator.atoms";
 
@@ -14,8 +14,7 @@ export default function Toolbox(props: Props) {
 
   const isMarkReview = useRecoilValue(isMarkedReviewSelector(index));
 
-  const [markReviewList, setMarkReviewList] =
-    useRecoilState(markReviewListState);
+  const [markReviewList, setMarkReviewList] = useRecoilState(forReviewState);
 
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState

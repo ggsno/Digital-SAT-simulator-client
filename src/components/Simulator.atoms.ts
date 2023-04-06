@@ -1,7 +1,7 @@
 import { atom, selectorFamily } from "recoil";
 
-export const markReviewListState = atom<{ indexList: number[] }>({
-  key: "MarkReviewList",
+export const forReviewState = atom<{ indexList: number[] }>({
+  key: "ForReviewList",
   default: {
     indexList: [],
   },
@@ -12,7 +12,7 @@ export const isMarkedReviewSelector = selectorFamily({
   get:
     (index: number) =>
     ({ get }) => {
-      return get(markReviewListState).indexList.includes(index);
+      return get(forReviewState).indexList.includes(index);
     },
 });
 

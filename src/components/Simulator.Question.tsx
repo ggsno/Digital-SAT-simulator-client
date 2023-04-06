@@ -82,7 +82,7 @@ export default function Question(props: Props) {
   };
 
   const convertToObjectiveChoice = (index: number) =>
-    ["A", "B", "C", "D"][index];
+    ["A", "B", "C", "D", "E"][index];
 
   const convertFromObjectiveChoice = (choice: string | null) => {
     switch (choice) {
@@ -94,6 +94,8 @@ export default function Question(props: Props) {
         return 2;
       case "D":
         return 3;
+      case "E":
+        return 4;
       default:
         return choice;
     }

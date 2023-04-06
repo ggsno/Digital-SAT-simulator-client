@@ -13,7 +13,9 @@ export default function Header({ title }: { title: string }) {
   return (
     <>
       <header className="grid grid-cols-5 w-100vw px-10 py-5">
-        <h1 className="col-span-2 text-xl truncate hover:text-clip">{title}</h1>
+        <h1 className="col-span-2 text-xl truncate hover:text-clip font-medium">
+          {title}
+        </h1>
         <div className="text-2xl self-center justify-self-center">0:00</div>
         <button
           type="button"
