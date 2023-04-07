@@ -38,12 +38,6 @@ const TEMP = {
       choices: ["ppap", "214", "afwefew", "qjwdqw", "wef"],
     },
     {
-      passage: `when printed: the language has the <b>same pleasant</b> 
-    musical qualiry on the page as it does when performed by Phi.
-    In recommending Bao Phi's collection <i>Song I Sing</i> , a librarian
-    noted that <ins>pieces by the spoken-word poet</ins> don't lose their
-    ____ nature when printed: the language has the <b>same pleasant</b> 
-    musical qualiry on the page as it does when performed by Phi.`,
       question: `The most logical and precise Which choice <b>completes</b> the text with 
     word or phrase?`,
       choices: ["ppap", "214", "afwefew", "qjwdqw"],
@@ -57,7 +51,6 @@ const TEMP = {
     musical qualiry on the page as it does when performed by Phi.`,
       question: `The most logical and precise Which choice <b>completes</b> the text with 
     word or phrase?`,
-      choices: ["ppap", "214", "afwefew", "qjwdqw"],
     },
     {
       passage: `when printed: the language has the <b>same pleasant</b> 
