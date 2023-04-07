@@ -54,3 +54,8 @@ export const answerState = atom<(string | null)[]>({
   key: "Answer",
   default: [],
 });
+
+export const timerState = atom<number | null>({
+  key: "Timer",
+  default: null,
+});

@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import Simulator from "./components/Simulator";
-import { examState } from "./components/Simulator.atoms";
+import { examState, timerState } from "./components/Simulator.atoms";
 
 const TEMP = {
   id: "0",
@@ -146,6 +146,8 @@ const TEMP = {
 function App() {
   const setQuestions = useSetRecoilState(examState);
   setQuestions(TEMP);
+  const setTimer = useSetRecoilState(timerState);
+  setTimer(Date.now());
   return (
     <>
       <Simulator />
