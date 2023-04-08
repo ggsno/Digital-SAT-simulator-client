@@ -173,7 +173,7 @@ export default function Question(props: Props) {
                       ${
                         optionEliminator.isActive &&
                         isEliminatorInclude(choiceIndex)
-                          ? "text-gray"
+                          ? "text-gray relative after:absolute after:top-1/2 after:left-[-4px] after:content-[''] after:border-b-2 after:border-black after:w-[calc(100%_+_8px)]"
                           : null
                       }`}
                       htmlFor={`choice${choiceIndex}`}
@@ -199,7 +199,7 @@ export default function Question(props: Props) {
                             onClick={() => {
                               handleOptionEliminator("REMOVE", choiceIndex);
                             }}
-                            className="font-main underline"
+                            className="font-main underline font-bold"
                           >
                             Undo
                           </button>
@@ -216,7 +216,7 @@ export default function Question(props: Props) {
                               handleOptionEliminator("ADD", choiceIndex);
                             }}
                             className={`font-main border border-gray-dark rounded-full \
-                      w-5 h-5 text-center leading-5 line-through`}
+                      w-5 h-5 text-center leading-5 relative after:absolute after:top-2 after:left-[-3px] after:content-[''] after:border-b-2 after:border-black after:w-6`}
                           >
                             {convertToMultipleChoice(choiceIndex)}
                           </button>

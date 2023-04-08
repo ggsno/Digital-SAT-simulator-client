@@ -4,7 +4,7 @@ import { examState, timerState } from "./components/Simulator.atoms";
 
 const TEMP = {
   id: "0",
-  title: "Section 1, Module 1: Reading and Writing Reading and Writing",
+  title: "Section 1, Module 1: Reading and Writing",
   module: [
     {
       passage: `In recommending Bao Phi's collection <i>Song I Sing</i> , a librarian

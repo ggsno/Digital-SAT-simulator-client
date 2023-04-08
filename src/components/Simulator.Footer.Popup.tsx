@@ -51,7 +51,7 @@ export default function Popup({
               onClick={() => {
                 setIsPopupOpened(false);
               }}
-              className="bg-cover w-4 h-4"
+              className="bg-cover w-4 h-4 shrink-0"
               style={{ backgroundImage: "url(image/exit.png)" }}
             />
           </div>
