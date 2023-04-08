@@ -126,10 +126,12 @@ export default function Question(props: Props) {
         } h-[calc(100vh_-_173px)]`}
       >
         {passage && (
-          <p
-            className="font-question p-9 max-w-2xl justify-self-center overflow-auto"
-            dangerouslySetInnerHTML={{ __html: passage }}
-          />
+          <div className="overflow-auto w-full flex justify-center">
+            <p
+              className="font-question p-9 max-w-2xl  "
+              dangerouslySetInnerHTML={{ __html: passage }}
+            />
+          </div>
         )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl">
@@ -167,9 +169,9 @@ export default function Question(props: Props) {
                       className={`peer sr-only`}
                     />
                     <label
-                      className={`grow flex px-2 h-[2.75rem] items-center hover:cursor-pointer rounded-md border \
-                    border-black peer-checked:border-blue peer-checked:border-2 \
-                      peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white\
+                      className={`grow flex p-2 w-full break-all items-center hover:cursor-pointer rounded-md border
+                    border-black peer-checked:border-blue peer-checked:border-2
+                      peer-checked:[&>div]:bg-blue peer-checked:[&>div]:text-white
                       ${
                         optionEliminator.isActive &&
                         isEliminatorInclude(choiceIndex)
@@ -179,7 +181,7 @@ export default function Question(props: Props) {
                       htmlFor={`choice${choiceIndex}`}
                     >
                       <div
-                        className={`font-main mr-4 border-2 ${
+                        className={`font-main mr-4 border-2 shrink-0 ${
                           optionEliminator.isActive &&
                           isEliminatorInclude(choiceIndex)
                             ? "border-gray"
@@ -189,7 +191,7 @@ export default function Question(props: Props) {
                       >
                         {convertToMultipleChoice(choiceIndex)}
                       </div>
-                      {choice}
+                      <p dangerouslySetInnerHTML={{ __html: choice }} />
                     </label>
 
                     {optionEliminator.isActive ? (
