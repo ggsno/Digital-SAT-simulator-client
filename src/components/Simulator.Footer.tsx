@@ -23,7 +23,10 @@ export default function Footer(props: Props) {
       {isPopupOpened && (
         <Popup popupState={popupState} popupButtonRef={popupButtonRef} />
       )}
-      <footer className="fixed bottom-0 left-0 w-full grid grid-cols-3 py-5 px-8">
+      <footer
+        className="fixed bottom-0 left-0 w-full grid grid-cols-3 py-4 px-8
+       bg-white border-dashed border-t-2 border-gray mt-2"
+      >
         <div className="self-center text-xl">{userName}</div>
         {questionIndex < exam.module.length ? (
           <button

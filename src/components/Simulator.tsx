@@ -48,7 +48,6 @@ export default function Simulator() {
       ) : (
         <Review />
       )}
-      <hr className="border-dashed border-t-2 border-gray mt-2" />
       <Footer userName={userName} totalQuestionCount={totalQuestionCount} />
     </>
   );
