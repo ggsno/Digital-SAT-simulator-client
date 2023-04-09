@@ -62,7 +62,15 @@ export default function Footer(props: Props) {
           <button
             type="button"
             onClick={() => {
-              if (questionIndex >= exam.module.length) alert("제출" + answer);
+              if (questionIndex >= exam.module.length)
+                alert(
+                  "제출되었습니다.\n" +
+                    answer.reduce(
+                      (acc, cur, i) =>
+                        acc + `${i + 1}번 : ${cur ?? "미응답"}\n`,
+                      ""
+                    )
+                );
               else setQuestionIndex(questionIndex + 1);
             }}
             className="bg-blue text-white rounded-full py-2 px-6"

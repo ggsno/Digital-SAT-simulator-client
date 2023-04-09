@@ -127,8 +127,8 @@ export default function Question(props: Props) {
       >
         {passage && (
           <div className="overflow-auto w-full flex justify-center">
-            <p
-              className="font-question p-9 max-w-2xl  "
+            <div
+              className="font-question p-9 max-w-2xl [&>p]:mb-2 [&>h2]:mb-2 [&>h2]:font-bold"
               dangerouslySetInnerHTML={{ __html: passage }}
             />
           </div>
@@ -181,17 +181,19 @@ export default function Question(props: Props) {
                       htmlFor={`choice${choiceIndex}`}
                     >
                       <div
-                        className={`font-main mr-4 border-2 shrink-0 ${
+                        className={`font-main mr-4 border-2 shrink-0 rounded-full w-6 h-6 text-center leading-[1.4rem] font-bold  ${
                           optionEliminator.isActive &&
                           isEliminatorInclude(choiceIndex)
-                            ? "border-gray"
-                            : "border-gray-dark"
-                        } rounded-full \
-                    w-6 h-6 text-center leading-6`}
+                            ? "border-gray text-gray"
+                            : "border-gray-dark text-gray-dark"
+                        }`}
                       >
                         {convertToMultipleChoice(choiceIndex)}
                       </div>
-                      <p dangerouslySetInnerHTML={{ __html: choice }} />
+                      <p
+                        dangerouslySetInnerHTML={{ __html: choice }}
+                        className="break-keep"
+                      />
                     </label>
 
                     {optionEliminator.isActive ? (

@@ -21,7 +21,7 @@ export default function Simulator() {
   const { title, module } = exam;
   const questionIndex = useRecoilValue(questionIndexState);
 
-  const userName = "Gangsan O";
+  const userName = "Gildong Hong";
 
   useEffect(() => {
     setAnswer(Array(module.length).fill(null));
