@@ -1,0 +1,13 @@
+{
+  "name": "Digital SAT Simulator",
+  "start_url": "/",
+  "id": "SAT",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/image/brix.webp",
+      "type": "image/webp",
+      "sizes": "512x512"
+    }
+  ]
+}
