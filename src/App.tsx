@@ -5,7 +5,7 @@ import { examState, timerState } from "./components/Simulator.atoms";
 const TEMP = {
   id: "0",
   title: "Section 1, Module 1: Reading and Writing",
-  module: [
+  modules: [
     {
       passage: `The <u>　　　　</u> of Maria Irene Fornes' play Mud—a realistic room perched on a dirt pile—challenges conventional interpretations of stage scenery.`,
       question: `Which choice completes the text with the most logical and precise word or phrase?`,

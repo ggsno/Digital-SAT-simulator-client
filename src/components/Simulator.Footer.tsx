@@ -28,7 +28,7 @@ export default function Footer(props: Props) {
        bg-white border-dashed border-t-2 border-gray mt-2"
       >
         <div className="self-center text-xl">{userName}</div>
-        {questionIndex < exam.module.length ? (
+        {questionIndex < exam.modules.length ? (
           <button
             type="button"
             ref={popupButtonRef}
@@ -62,7 +62,7 @@ export default function Footer(props: Props) {
           <button
             type="button"
             onClick={() => {
-              if (questionIndex >= exam.module.length)
+              if (questionIndex >= exam.modules.length)
                 alert(
                   "제출되었습니다.\n" +
                     answer.reduce(

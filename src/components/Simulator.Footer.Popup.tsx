@@ -83,7 +83,7 @@ export default function Popup({
               type="button"
               onClick={() => {
                 setIsPopupOpened(false);
-                setQuestionIndex(exam.module.length);
+                setQuestionIndex(exam.modules.length);
               }}
               className="text-blue font-bold text-sm border border-blue rounded-full px-4 py-1"
             >

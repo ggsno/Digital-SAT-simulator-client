@@ -17,14 +17,14 @@ export default function Simulator() {
   const exam = useRecoilValue(examState);
   const setAnswer = useSetRecoilState(answerState);
   if (!exam) throw new Error("no exam state");
-  const totalQuestionCount = exam?.module.length;
-  const { title, module } = exam;
+  const totalQuestionCount = exam?.modules.length;
+  const { title, modules } = exam;
   const questionIndex = useRecoilValue(questionIndexState);
 
   const userName = "Gildong Hong";
 
   useEffect(() => {
-    setAnswer(Array(module.length).fill(null));
+    setAnswer(Array(modules.length).fill(null));
   }, [exam]);
 
   return (
@@ -39,11 +39,11 @@ export default function Simulator() {
       />
       <Header title={title} />
       <hr className="border-dashed border-t-2 border-gray mb-2" />
-      {questionIndex < module.length ? (
+      {questionIndex < modules.length ? (
         <Question
-          passage={module[questionIndex].passage}
-          question={module[questionIndex].question}
-          choices={module[questionIndex].choices}
+          passage={modules[questionIndex].passage}
+          question={modules[questionIndex].question}
+          choices={modules[questionIndex].choices}
         />
       ) : (
         <Review />

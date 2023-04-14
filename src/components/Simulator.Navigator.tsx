@@ -17,7 +17,7 @@ export default function Navigator({
   const [questionIndex, setQuestionIndex] = useRecoilState(questionIndexState);
   if (!exam || !forReview || !answers) throw new Error("no state : navigator");
 
-  const navNumbers = Array(exam.module.length)
+  const navNumbers = Array(exam.modules.length)
     .fill(0)
     .map((_, i) => i + 1);
 

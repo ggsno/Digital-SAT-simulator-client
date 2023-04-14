@@ -1,10 +1,12 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  annotateRefState,
   answerState,
   optionEliminatorState,
   questionIndexState,
 } from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
+import { useEffect, useRef } from "react";
 
 type Props = {
   passage?: string;
@@ -118,6 +120,15 @@ export default function Question(props: Props) {
       choiceIndex
     );
 
+  const setAnnotateRef = useSetRecoilState(annotateRefState);
+  const passageRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (passageRef.current) {
+      setAnnotateRef(passageRef.current);
+    }
+  }, [passageRef.current]);
+
   return (
     <>
       <div
@@ -126,9 +137,12 @@ export default function Question(props: Props) {
         } h-[calc(100vh_-_173px)]`}
       >
         {passage && (
-          <div className="overflow-auto w-full flex justify-center">
+          <div
+            ref={passageRef}
+            className="overflow-auto w-full flex justify-center"
+          >
             <div
-              className="font-question p-9 max-w-2xl [&>p]:mb-2 [&>h2]:mb-2 [&>h2]:font-bold"
+              className="font-question p-9 max-w-2xl [&_p]:mb-2 [&_h2]:mb-2 [&_h2]:font-bold"
               dangerouslySetInnerHTML={{ __html: passage }}
             />
           </div>

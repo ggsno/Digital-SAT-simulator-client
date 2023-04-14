@@ -35,7 +35,7 @@ export const isCalulatorOpenedState = atom({
 export const examState = atom<{
   id: string;
   title: string;
-  module: {
+  modules: {
     passage?: string;
     question: string;
     choices?: string[];
@@ -57,5 +57,26 @@ export const answerState = atom<(string | null)[]>({
 
 export const timerState = atom<number | null>({
   key: "Timer",
+  default: null,
+});
+
+export type Annotate = {
+  id: string;
+  selectedText: string;
+  comment: string;
+};
+
+export const annotateListState = atom<Annotate[]>({
+  key: "AnnotateList",
+  default: [],
+});
+
+export const annotateRefState = atom<HTMLDivElement | null>({
+  key: "AnnotateRef",
+  default: null,
+});
+
+export const annotateCurrentState = atom<Annotate | null>({
+  key: "annotateCurrent",
   default: null,
 });
