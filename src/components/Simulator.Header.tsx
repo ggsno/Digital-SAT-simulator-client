@@ -36,7 +36,7 @@ export default function Header({ title }: { title: string }) {
   const handleAnotateClick = () => {
     try {
       const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
+      const range = selection?.getRangeAt(selection.rangeCount - 1);
       let container = range?.commonAncestorContainer as HTMLElement;
       if (
         !selection ||
