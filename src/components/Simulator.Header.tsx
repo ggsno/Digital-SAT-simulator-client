@@ -34,58 +34,67 @@ export default function Header({ title }: { title: string }) {
   };
 
   const handleAnotateClick = () => {
-    const selection = window.getSelection();
-    const range = selection?.getRangeAt(0);
-    let container = range?.commonAncestorContainer as HTMLElement;
-    if (
-      !selection ||
-      !container ||
-      !range ||
-      !annotateRef?.contains(container) ||
-      selection.isCollapsed
-    ) {
-      // MAKE A SELECTION FIRST
-      // Select some text, then press annotate.
-      return;
+    try {
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0);
+      let container = range?.commonAncestorContainer as HTMLElement;
+      if (
+        !selection ||
+        !container ||
+        !range ||
+        !annotateRef?.contains(container) ||
+        selection.isCollapsed
+      ) {
+        alert("MAKE A SELECTION FIRST");
+        // MAKE A SELECTION FIRST
+        // Select some text, then press annotate.
+        return;
+      }
+
+      const newId = Date.now().toString();
+      const newSpan = document.createElement("span");
+      newSpan.id = newId;
+      newSpan.classList.add(
+        "custom_highlight",
+        "bg-yellow",
+        "border-b",
+        "border-dashed",
+        "hover:bg-yellow-dark"
+      );
+
+      const newAnnotate = {
+        id: newId,
+        selectedText: selection.toString(),
+        comment: "",
+        ref: newSpan,
+      };
+
+      setAnnotateCurrent(newAnnotate);
+
+      setAnnotateList([...annotateList, newAnnotate]);
+
+      range.surroundContents(newSpan);
+
+      setExam({
+        ...exam,
+        modules: exam.modules.map((module, i) =>
+          i !== questionIndex
+            ? module
+            : {
+                ...module,
+                passage: annotateRef.innerHTML.replace(
+                  /^<div.*?>|<\/div>$/g,
+                  ""
+                ),
+              }
+        ),
+      });
+
+      setIsCommentPopupOpened(true);
+    } catch (err) {
+      alert(err);
+      throw err;
     }
-
-    const newId = Date.now().toString();
-    const newSpan = document.createElement("span");
-    newSpan.id = newId;
-    newSpan.classList.add(
-      "custom_highlight",
-      "bg-yellow",
-      "border-b",
-      "border-dashed",
-      "hover:bg-yellow-dark"
-    );
-
-    const newAnnotate = {
-      id: newId,
-      selectedText: selection.toString(),
-      comment: "",
-      ref: newSpan,
-    };
-
-    setAnnotateCurrent(newAnnotate);
-
-    setAnnotateList([...annotateList, newAnnotate]);
-
-    range.surroundContents(newSpan);
-
-    setExam({
-      ...exam,
-      modules: exam.modules.map((module, i) =>
-        i !== questionIndex
-          ? module
-          : {
-              ...module,
-              passage: annotateRef.innerHTML.replace(/^<div.*?>|<\/div>$/g, ""),
-            }
-      ),
-    });
-
-    setIsCommentPopupOpened(true);
   };
 
   useEffect(() => {
