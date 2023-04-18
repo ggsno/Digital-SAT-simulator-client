@@ -7,7 +7,7 @@ import {
   questionIndexState,
   annotateCurrentState,
 } from "./Simulator.atoms";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { examState } from "./Simulator.atoms";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
 
@@ -24,6 +24,7 @@ export default function Header({ title }: { title: string }) {
   const questionIndex = useRecoilValue(questionIndexState);
   if (!exam) throw new Error("no exam state");
 
+  const selectionRef = useRef<Selection | null>(null);
   const [time, setTime] = useState(END_TIME_SECONDS);
   const [isCommentPopupOpened, setIsCommentPopupOpened] = useState(false);
 
@@ -35,7 +36,7 @@ export default function Header({ title }: { title: string }) {
 
   const handleAnotateClick = () => {
     try {
-      const selection = window.getSelection();
+      const selection = selectionRef.current;
       const range = selection?.getRangeAt(selection.rangeCount - 1);
       let container = range?.commonAncestorContainer as HTMLElement;
       if (
@@ -50,7 +51,6 @@ export default function Header({ title }: { title: string }) {
         // Select some text, then press annotate.
         return;
       }
-
       const newId = Date.now().toString();
       const newSpan = document.createElement("span");
       newSpan.id = newId;
@@ -61,18 +61,14 @@ export default function Header({ title }: { title: string }) {
         "border-dashed",
         "hover:bg-yellow-dark"
       );
-
       const newAnnotate = {
         id: newId,
         selectedText: selection.toString(),
         comment: "",
         ref: newSpan,
       };
-
       setAnnotateCurrent(newAnnotate);
-
       setAnnotateList([...annotateList, newAnnotate]);
-
       range.surroundContents(newSpan);
 
       setExam({
@@ -89,7 +85,6 @@ export default function Header({ title }: { title: string }) {
               }
         ),
       });
-
       setIsCommentPopupOpened(true);
     } catch (err) {
       alert(err);
@@ -130,6 +125,24 @@ export default function Header({ title }: { title: string }) {
     );
   }, [annotateList, questionIndex]);
 
+  useEffect(() => {
+    document.addEventListener("selectionchange", () => {
+      const selectionNow = window.getSelection();
+      if (
+        selectionNow &&
+        selectionNow.rangeCount > 0 &&
+        !selectionNow.isCollapsed
+      ) {
+        selectionRef.current = selectionNow;
+      }
+    });
+  }, []);
+
+  function isDescendantOfSelection(target: any) {
+    const range = document.getSelection()?.getRangeAt(0);
+    const container = range?.commonAncestorContainer;
+    return container?.contains(target);
+  }
   return (
     <>
       {isCommentPopupOpened && (
@@ -155,6 +168,18 @@ export default function Header({ title }: { title: string }) {
           <button
             type="button"
             onClick={handleAnotateClick}
+            onTouchStart={(event) => {
+              if (isDescendantOfSelection(event.target)) {
+                event.preventDefault();
+              }
+            }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+
+              if (isDescendantOfSelection(event.target)) {
+                document.getSelection()?.removeAllRanges();
+              }
+            }}
             className={`text-sm`}
           >
             <img
