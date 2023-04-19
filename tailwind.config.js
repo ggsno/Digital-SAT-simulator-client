@@ -21,6 +21,7 @@ export default {
         "gray-light": "#f0f0f0",
         yellow: "#fae89d",
         "yellow-dark": "#fada53",
+        "violet-blue": "#324dc7",
       },
     },
   },
