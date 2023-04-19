@@ -9,9 +9,9 @@ import Toolbox from "./Simulator.Question.Toolbox";
 import { useEffect, useRef } from "react";
 
 type Props = {
-  passage?: string;
+  passage: string | null;
   question: string;
-  choices?: string[];
+  choices: string[] | null;
 };
 
 export default function Question(props: Props) {

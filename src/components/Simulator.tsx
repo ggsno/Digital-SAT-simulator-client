@@ -7,25 +7,28 @@ import Header from "./Simulator.Header";
 import {
   isCalulatorOpenedState,
   questionIndexState,
-  examState,
+  moduleState,
   answerState,
 } from "./Simulator.atoms";
 import Review from "./Simulator.Review";
+import { userState } from "../atoms/user";
 
 export default function Simulator() {
   const isCalculatorOpen = useRecoilValue(isCalulatorOpenedState);
-  const exam = useRecoilValue(examState);
+  const module = useRecoilValue(moduleState);
   const setAnswer = useSetRecoilState(answerState);
-  if (!exam) throw new Error("no exam state");
-  const totalQuestionCount = exam?.modules.length;
-  const { title, modules } = exam;
+  if (!module) throw new Error("no module state");
+  const totalQuestionCount = module.questions.length;
+  const { title, questions } = module;
   const questionIndex = useRecoilValue(questionIndexState);
 
-  const userName = "Gildong Hong";
+  const user = useRecoilValue(userState);
+  if (!user) throw new Error("no user state");
+  const userName = user.name;
 
   useEffect(() => {
-    setAnswer(Array(modules.length).fill(null));
-  }, [exam]);
+    setAnswer(Array(questions.length).fill(null));
+  }, [module]);
 
   return (
     <>
@@ -39,11 +42,11 @@ export default function Simulator() {
       />
       <Header title={title} />
       <hr className="border-dashed border-t-2 border-gray mb-2" />
-      {questionIndex < modules.length ? (
+      {questionIndex < questions.length ? (
         <Question
-          passage={modules[questionIndex].passage}
-          question={modules[questionIndex].question}
-          choices={modules[questionIndex].choices}
+          passage={questions[questionIndex].passage}
+          question={questions[questionIndex].question}
+          choices={questions[questionIndex].choices}
         />
       ) : (
         <Review />

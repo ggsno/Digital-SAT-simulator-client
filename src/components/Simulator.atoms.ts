@@ -32,16 +32,15 @@ export const isCalulatorOpenedState = atom({
   default: false,
 });
 
-export const examState = atom<{
-  id: string;
+export const moduleState = atom<{
   title: string;
-  modules: {
-    passage?: string;
+  questions: {
+    passage: string | null;
     question: string;
-    choices?: string[];
+    choices: string[] | null;
   }[];
 } | null>({
-  key: "Exam",
+  key: "Module",
   default: null,
 });
 

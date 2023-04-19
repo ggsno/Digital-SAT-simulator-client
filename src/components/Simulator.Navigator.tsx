@@ -1,7 +1,7 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   answerState,
-  examState,
+  moduleState,
   forReviewState,
   questionIndexState,
 } from "./Simulator.atoms";
@@ -11,13 +11,13 @@ export default function Navigator({
 }: {
   navigateCallback?: VoidFunction;
 }) {
-  const exam = useRecoilValue(examState);
+  const exam = useRecoilValue(moduleState);
   const forReview = useRecoilValue(forReviewState);
   const answers = useRecoilValue(answerState);
   const [questionIndex, setQuestionIndex] = useRecoilState(questionIndexState);
   if (!exam || !forReview || !answers) throw new Error("no state : navigator");
 
-  const navNumbers = Array(exam.modules.length)
+  const navNumbers = Array(exam.questions.length)
     .fill(0)
     .map((_, i) => i + 1);
 

@@ -11,17 +11,29 @@ import {
 import Login from "./components/Login";
 import isAuthentificated from "./utils/authentificate";
 import { Toaster } from "react-hot-toast";
+import Lobby from "./components/Lobby";
+import Simulator from "./components/Simulator";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: () => (!isAuthentificated() ? redirect("/login") : null),
-    element: <App />,
+    loader: () =>
+      !isAuthentificated() ? redirect("/login") : redirect("/lobby"),
   },
   {
     path: "/login",
     loader: () => (isAuthentificated() ? redirect("/") : null),
     element: <Login />,
+  },
+  {
+    path: "/lobby",
+    loader: () => (!isAuthentificated() ? redirect("/login") : null),
+    element: <Lobby />,
+  },
+  {
+    path: "/exam",
+    loader: () => (!isAuthentificated() ? redirect("/login") : null),
+    element: <Simulator />,
   },
 ]);
 

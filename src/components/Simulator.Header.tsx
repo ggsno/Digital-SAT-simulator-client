@@ -8,7 +8,7 @@ import {
   annotateCurrentState,
 } from "./Simulator.atoms";
 import { useEffect, useRef, useState } from "react";
-import { examState } from "./Simulator.atoms";
+import { moduleState } from "./Simulator.atoms";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
 
 const END_TIME_SECONDS = 50 * 60;
@@ -19,10 +19,10 @@ export default function Header({ title }: { title: string }) {
   );
   const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
   const annotateRef = useRecoilValue(annotateRefState);
-  const [exam, setExam] = useRecoilState(examState);
+  const [module, setModule] = useRecoilState(moduleState);
   const setAnnotateCurrent = useSetRecoilState(annotateCurrentState);
   const questionIndex = useRecoilValue(questionIndexState);
-  if (!exam) throw new Error("no exam state");
+  if (!module) throw new Error("no module state");
 
   const selectionRef = useRef<Selection | null>(null);
   const [time, setTime] = useState(END_TIME_SECONDS);
@@ -71,13 +71,13 @@ export default function Header({ title }: { title: string }) {
       setAnnotateList([...annotateList, newAnnotate]);
       range.surroundContents(newSpan);
 
-      setExam({
-        ...exam,
-        modules: exam.modules.map((module, i) =>
+      setModule({
+        ...module,
+        questions: module.questions.map((question, i) =>
           i !== questionIndex
-            ? module
+            ? question
             : {
-                ...module,
+                ...question,
                 passage: annotateRef.innerHTML.replace(
                   /^<div.*?>|<\/div>$/g,
                   ""

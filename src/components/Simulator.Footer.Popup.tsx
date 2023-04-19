@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { examState, questionIndexState } from "./Simulator.atoms";
+import { moduleState, questionIndexState } from "./Simulator.atoms";
 import Navigator from "./Simulator.Navigator";
 
 export default function Popup({
@@ -13,9 +13,9 @@ export default function Popup({
 }) {
   const [isPopupOpened, setIsPopupOpened] = popupState;
   const setQuestionIndex = useSetRecoilState(questionIndexState);
-  const exam = useRecoilValue(examState);
-  if (!exam) throw new Error("no exam value at Footer component");
-  const { title } = exam;
+  const module = useRecoilValue(moduleState);
+  if (!module) throw new Error("no module value at Footer component");
+  const { title } = module;
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function Popup({
               type="button"
               onClick={() => {
                 setIsPopupOpened(false);
-                setQuestionIndex(exam.modules.length);
+                setQuestionIndex(module.questions.length);
               }}
               className="text-blue font-bold text-sm border border-blue rounded-full px-4 py-1"
             >

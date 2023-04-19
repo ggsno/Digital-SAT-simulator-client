@@ -1,6 +1,10 @@
 import { useState, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { answerState, examState, questionIndexState } from "./Simulator.atoms";
+import {
+  answerState,
+  moduleState,
+  questionIndexState,
+} from "./Simulator.atoms";
 import Popup from "./Simulator.Footer.Popup";
 
 type Props = {
@@ -15,8 +19,8 @@ export default function Footer(props: Props) {
   const [questionIndex, setQuestionIndex] = useRecoilState(questionIndexState);
   const answer = useRecoilValue(answerState);
   const popupButtonRef = useRef(null);
-  const exam = useRecoilValue(examState);
-  if (!exam) throw new Error("no exam value at Footer component");
+  const module = useRecoilValue(moduleState);
+  if (!module) throw new Error("no module value at Footer component");
 
   return (
     <>
@@ -28,7 +32,7 @@ export default function Footer(props: Props) {
        bg-white border-dashed border-t-2 border-gray mt-2"
       >
         <div className="self-center text-xl">{userName}</div>
-        {questionIndex < exam.modules.length ? (
+        {questionIndex < module.questions.length ? (
           <button
             type="button"
             ref={popupButtonRef}
@@ -62,7 +66,7 @@ export default function Footer(props: Props) {
           <button
             type="button"
             onClick={() => {
-              if (questionIndex >= exam.modules.length)
+              if (questionIndex >= module.questions.length)
                 alert(
                   "제출되었습니다.\n" +
                     answer.reduce(

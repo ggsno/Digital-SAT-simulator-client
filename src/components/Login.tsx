@@ -1,19 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchLogin } from "../service/apis";
+import { fetchLogin, fetchGetUser } from "../service/apis";
 import { storage } from "../utils/storage";
 import { handleError } from "../utils/handleError";
+import { useSetRecoilState } from "recoil";
+import { userState } from "../atoms/user";
 
 export default function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const navigator = useNavigate();
+  const setUser = useSetRecoilState(userState);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetchLogin({ id, password });
-      storage.set("ACCESS_TOKEN", res.data.data.access_token);
+      const {
+        data: {
+          data: { access_token },
+        },
+      } = await fetchLogin({ id, password });
+
+      storage.set("ACCESS_TOKEN", access_token);
+
+      const {
+        data: { data: user },
+      } = await fetchGetUser({ id });
+
+      setUser({
+        id,
+        name: user.name,
+        isTeacher: user.is_teacher,
+        examId: user.exam_id,
+      });
+
       navigator("/");
     } catch (err) {
       handleError(err);
@@ -35,6 +55,7 @@ export default function Login() {
             <input
               className="border border-gray rounded-md w-full h-10 p-3 font-normal"
               onChange={(e) => setId(e.target.value)}
+              required
             />
           </label>
           <label className="mb-2 font-bold">
@@ -42,6 +63,8 @@ export default function Login() {
             <input
               className="border border-gray rounded-md w-full h-10 p-3 font-normal"
               onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
             />
           </label>
           <button

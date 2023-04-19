@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   annotateCurrentState,
   annotateListState,
-  examState,
+  moduleState,
   questionIndexState,
 } from "./Simulator.atoms";
 
@@ -16,9 +16,9 @@ export default function AnnotateCommentPopup({
     useRecoilState(annotateCurrentState);
   if (!annotateCurrent) throw new Error("no annotate current state");
   const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
-  const [exam, setExam] = useRecoilState(examState);
+  const [module, setModule] = useRecoilState(moduleState);
   const questionIndex = useRecoilValue(questionIndexState);
-  if (!exam) throw new Error("no exam state");
+  if (!module) throw new Error("no module state");
   const { id, selectedText, comment } = annotateCurrent;
   const [newComment, setNewComment] = useState(comment);
 
@@ -45,14 +45,14 @@ export default function AnnotateCommentPopup({
       `<span\\s+id\\s*=\\s*["']\\s*${id}\\s*["']\\s+class\\s*=\\s*["'].*?\\bcustom_highlight\\b.*?["']\\s*>(.*?)<\/span>`
     );
 
-    setExam({
-      ...exam,
-      modules: exam.modules.map((module, i) =>
+    setModule({
+      ...module,
+      questions: module.questions.map((question, i) =>
         i !== questionIndex
-          ? module
+          ? question
           : {
-              ...module,
-              passage: module.passage?.replace(reg, "$1"),
+              ...question,
+              passage: question.passage!.replace(reg, "$1"),
             }
       ),
     });
