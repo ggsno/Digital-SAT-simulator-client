@@ -1,11 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchLogin } from "../service/apis";
+import { storage } from "../utils/storage";
+import { handleError } from "../utils/handleError";
 
 export default function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const navigator = useNavigate();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const res = await fetchLogin({ id, password });
+      storage.set("ACCESS_TOKEN", res.data.data.access_token);
+      navigator("/");
+    } catch (err) {
+      handleError(err);
+    }
   };
 
   return (
