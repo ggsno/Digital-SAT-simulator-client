@@ -28,12 +28,12 @@ export default function StudentLobby() {
             questions: module.questions.map((question) => ({
               passage: question.passage ?? null,
               question: question.content,
-              choices: question.choice_1
+              choices: question.choice_A
                 ? [
-                    question.choice_1,
-                    question.choice_2,
-                    question.choice_3,
-                    question.choice_4,
+                    question.choice_A,
+                    question.choice_B,
+                    question.choice_C,
+                    question.choice_D,
                   ]
                 : null,
             })),

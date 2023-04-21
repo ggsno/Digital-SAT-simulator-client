@@ -48,11 +48,11 @@ type ExamResponse = {
           passage: string;
           content: string;
           image_path: string;
-          choice_1: string;
-          choice_2: string;
-          choice_3: string;
-          choice_4: string;
-          choice_5: string;
+          choice_A: string;
+          choice_B: string;
+          choice_C: string;
+          choice_D: string;
+          choice_E: string;
           correct_answer: string;
           modular_id: number;
         }>;

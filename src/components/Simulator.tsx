@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { GraphingCalculator } from "desmos-react";
 import Question from "./Simulator.Question";
 import Footer from "./Simulator.Footer";
@@ -17,7 +17,7 @@ import { userState } from "../atoms/user";
 export default function Simulator() {
   const questionIndex = useRecoilValue(questionIndexState);
   const isCalculatorOpen = useRecoilValue(isCalulatorOpenedState);
-  const setAnswer = useSetRecoilState(answerState);
+  const [answers, setAnswers] = useRecoilState(answerState);
   const module = useRecoilValue(moduleState);
   if (!module) throw new Error("no module state");
   const user = useRecoilValue(userState);
@@ -26,7 +26,9 @@ export default function Simulator() {
   setTimer(Date.now());
 
   useEffect(() => {
-    setAnswer(Array(module.questions.length).fill(null));
+    if (!answers) {
+      setAnswers(Array(module.questions.length).fill(null));
+    }
   }, [module]);
 
   return (
