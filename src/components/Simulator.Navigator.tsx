@@ -40,7 +40,7 @@ export default function Navigator({
                 setQuestionIndex(index);
                 navigateCallback && navigateCallback();
               }}
-              key={`navitem${number}`}
+              key={`navitem${index}`}
               className={`relative font-bold text-xl w-7 h-7 mr-4 mb-6 ${
                 isForReview(index) ? "after:content-[''] after:bg-black" : null
               } ${

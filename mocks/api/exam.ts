@@ -5,9 +5,7 @@ const examApi = [
     `${import.meta.env.VITE_BACKEND_URL}/api/users/:id`,
     async (req, res, ctx) => {
       const { id } = req.params;
-
       const user = dummy.users.find((e) => e.id === id);
-      console.log(user);
       return res(ctx.json(response(user)));
     }
   ),
@@ -15,7 +13,6 @@ const examApi = [
     `${import.meta.env.VITE_BACKEND_URL}/api/exams/:id`,
     async (req, res, ctx) => {
       const { id } = req.params;
-
       const exam = dummy.exams.find((e) => e.id === Number(id));
       return res(ctx.json(response(exam)));
     }

@@ -22,6 +22,7 @@ export default function Login() {
       } = await fetchLogin({ id, password });
 
       storage.set("ACCESS_TOKEN", access_token);
+      storage.set("USER_ID", id);
 
       const {
         data: { data: user },
