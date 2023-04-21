@@ -14,6 +14,12 @@ import { Toaster } from "react-hot-toast";
 import Lobby from "./components/Lobby";
 import Simulator from "./components/Simulator";
 
+import { worker } from "../mocks/browser";
+
+if (process.env.NODE_ENV === "development") {
+  worker.start();
+}
+
 const router = createBrowserRouter([
   {
     path: "/",

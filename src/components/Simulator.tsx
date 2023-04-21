@@ -9,25 +9,24 @@ import {
   questionIndexState,
   moduleState,
   answerState,
+  timerState,
 } from "./Simulator.atoms";
 import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
 
 export default function Simulator() {
-  const isCalculatorOpen = useRecoilValue(isCalulatorOpenedState);
-  const module = useRecoilValue(moduleState);
-  const setAnswer = useSetRecoilState(answerState);
-  if (!module) throw new Error("no module state");
-  const totalQuestionCount = module.questions.length;
-  const { title, questions } = module;
   const questionIndex = useRecoilValue(questionIndexState);
-
+  const isCalculatorOpen = useRecoilValue(isCalulatorOpenedState);
+  const setAnswer = useSetRecoilState(answerState);
+  const module = useRecoilValue(moduleState);
+  if (!module) throw new Error("no module state");
   const user = useRecoilValue(userState);
   if (!user) throw new Error("no user state");
-  const userName = user.name;
+  const setTimer = useSetRecoilState(timerState);
+  setTimer(Date.now());
 
   useEffect(() => {
-    setAnswer(Array(questions.length).fill(null));
+    setAnswer(Array(module.questions.length).fill(null));
   }, [module]);
 
   return (
@@ -40,18 +39,21 @@ export default function Simulator() {
       `,
         }}
       />
-      <Header title={title} />
+      <Header title={module.title} />
       <hr className="border-dashed border-t-2 border-gray mb-2" />
-      {questionIndex < questions.length ? (
+      {questionIndex < module.questions.length ? (
         <Question
-          passage={questions[questionIndex].passage}
-          question={questions[questionIndex].question}
-          choices={questions[questionIndex].choices}
+          passage={module.questions[questionIndex].passage}
+          question={module.questions[questionIndex].question}
+          choices={module.questions[questionIndex].choices}
         />
       ) : (
         <Review />
       )}
-      <Footer userName={userName} totalQuestionCount={totalQuestionCount} />
+      <Footer
+        userName={user.name}
+        totalQuestionCount={module.questions.length}
+      />
     </>
   );
 }
