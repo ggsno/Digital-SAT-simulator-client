@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import Question from "./Simulator.Question";
 import Footer from "./Simulator.Footer";
 import Header from "./Simulator.Header";
@@ -8,26 +13,40 @@ import {
   moduleState,
   answerState,
   timerState,
+  moduleIndexState,
+  sectionIndexState,
+  forReviewState,
+  optionEliminatorState,
+  annotateListState,
 } from "./Simulator.atoms";
 import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
 import { examState } from "../atoms/exam";
 
 export default function Simulator() {
-  const questionIndex = useRecoilValue(questionIndexState);
   const exam = useRecoilValue(examState);
   if (!exam) throw new Error("no exam state");
   const [module, setModule] = useRecoilState(moduleState);
-  const [answers, setAnswers] = useRecoilState(answerState);
+  const setAnswers = useSetRecoilState(answerState);
+  const questionIndex = useRecoilValue(questionIndexState);
+  const moduleIndex = useRecoilValue(moduleIndexState);
+  const sectionIndex = useRecoilValue(sectionIndexState);
   const user = useRecoilValue(userState);
   const setTimer = useSetRecoilState(timerState);
-  setTimer(Date.now());
+
+  const resetReview = useResetRecoilState(forReviewState);
+  const resetOptionEliminator = useResetRecoilState(optionEliminatorState);
+  const resetAnnoateList = useResetRecoilState(annotateListState);
 
   useEffect(() => {
-    const firstModule = exam.sections[0].modules[0];
-    setModule(firstModule);
-    setAnswers(Array(firstModule.questions.length).fill(null));
-  }, []);
+    const newModule = exam.sections[sectionIndex].modules[moduleIndex];
+    setModule(newModule);
+    setAnswers(Array(newModule.questions.length).fill(null));
+    resetReview();
+    resetOptionEliminator();
+    resetAnnoateList();
+    setTimer(Date.now());
+  }, [moduleIndex]);
 
   return (
     <>
@@ -35,7 +54,11 @@ export default function Simulator() {
         "loading ..."
       ) : (
         <>
-          <Header title={module.title} />
+          <Header
+            title={`Section ${sectionIndex + 1}, Module ${moduleIndex + 1}: ${
+              exam.sections[sectionIndex].title
+            }`}
+          />
           <hr className="border-dashed border-t-2 border-gray mb-2" />
           {questionIndex < module.questions.length ? (
             <Question

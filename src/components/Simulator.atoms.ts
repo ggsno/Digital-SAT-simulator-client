@@ -44,6 +44,16 @@ export const questionIndexState = atom({
   default: 0,
 });
 
+export const moduleIndexState = atom({
+  key: "ModuleIndex",
+  default: 0,
+});
+
+export const sectionIndexState = atom({
+  key: "SectionIndex",
+  default: 0,
+});
+
 export const answerState = atom<(string | null)[]>({
   key: "Answer",
   default: [],

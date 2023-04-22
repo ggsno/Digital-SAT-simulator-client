@@ -5,25 +5,28 @@ import {
   timerState,
   questionIndexState,
   annotateCurrentState,
+  sectionIndexState,
 } from "./Simulator.atoms";
 import { useEffect, useRef, useState } from "react";
 import { moduleState } from "./Simulator.atoms";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
 import { GraphingCalculator } from "desmos-react";
-
-const END_TIME_SECONDS = 50 * 60;
+import { examState } from "../atoms/exam";
 
 export default function Header({ title }: { title: string }) {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
   const annotateRef = useRecoilValue(annotateRefState);
-  const [module, setModule] = useRecoilState(moduleState);
   const setAnnotateCurrent = useSetRecoilState(annotateCurrentState);
-  const questionIndex = useRecoilValue(questionIndexState);
+  const [module, setModule] = useRecoilState(moduleState);
   if (!module) throw new Error("no module state");
+  const exam = useRecoilValue(examState);
+  if (!exam) throw new Error("no exam state");
+  const questionIndex = useRecoilValue(questionIndexState);
+  const sectionIndex = useRecoilValue(sectionIndexState);
 
   const selectionRef = useRef<Selection | null>(null);
-  const [time, setTime] = useState(END_TIME_SECONDS);
+  const [time, setTime] = useState(32 * 60);
   const [isCommentPopupOpened, setIsCommentPopupOpened] = useState(false);
 
   const startTime = useRecoilValue(timerState);
@@ -91,23 +94,26 @@ export default function Header({ title }: { title: string }) {
   };
 
   useEffect(() => {
+    let endTime = 60;
+    if (exam.sections[sectionIndex].title === "Reading and Writing") {
+      endTime *= 32;
+    } else if (exam.sections[sectionIndex].title === "Math") {
+      endTime *= 35;
+    } else {
+      throw new Error("undefined section title");
+    }
     const callback = () => {
       if (startTime) {
-        setTime(
-          Math.ceil((startTime + END_TIME_SECONDS * 1000 - Date.now()) / 1000)
-        );
+        setTime(Math.ceil((startTime + endTime * 1000 - Date.now()) / 1000));
       }
-      if (
-        startTime !== null &&
-        startTime + END_TIME_SECONDS * 1000 - Date.now() < 0
-      ) {
+      if (startTime !== null && startTime + endTime * 1000 - Date.now() < 0) {
         clearInterval(timer);
       }
     };
     const timer = setInterval(callback, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [startTime]);
 
   useEffect(() => {
     const highlightElements = document.querySelectorAll(".custom_highlight");
