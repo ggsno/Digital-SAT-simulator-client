@@ -1,5 +1,11 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { storage } from "../utils/storage";
+import {
+  AuthLoginRequest,
+  AuthLoginResponse,
+  ExamResponse,
+  UserResponse,
+} from "./types";
 
 const instance = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`,

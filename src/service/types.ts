@@ -1,9 +1,9 @@
-type AuthLoginRequest = {
+export type AuthLoginRequest = {
   id: string;
   password: string;
 };
 
-type AuthLoginResponse = {
+export type AuthLoginResponse = {
   result: boolean;
   message: string;
   data: {
@@ -12,7 +12,7 @@ type AuthLoginResponse = {
   };
 };
 
-type UserResponse = {
+export type UserResponse = {
   result: boolean;
   message: string;
   data: {
@@ -25,7 +25,7 @@ type UserResponse = {
   };
 };
 
-type ExamResponse = {
+export type ExamResponse = {
   result: boolean;
   message: string;
   data: {

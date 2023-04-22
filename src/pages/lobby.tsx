@@ -8,6 +8,7 @@ import { fetchGetExam, fetchGetUser } from "../service/apis";
 import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";
 import { examState } from "../atoms/exam";
+import { ExamResponse, UserResponse } from "../service/types";
 
 export const loaderLobby = async () => {
   try {
