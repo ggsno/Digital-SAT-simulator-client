@@ -27,11 +27,6 @@ export const optionEliminatorState = atom<{
   },
 });
 
-export const isCalulatorOpenedState = atom({
-  key: "IsCalculatorOpened",
-  default: false,
-});
-
 export const moduleState = atom<{
   title: string;
   questions: {

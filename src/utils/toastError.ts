@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 
-export function handleError(error: unknown) {
+export function toastError(error: unknown) {
   console.error(error);
   if (error instanceof AxiosError) {
     if (error.response?.data?.message)

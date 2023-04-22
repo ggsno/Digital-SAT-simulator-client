@@ -1,34 +1,67 @@
 import { useSetRecoilState } from "recoil";
+import { redirect, useLoaderData } from "react-router-dom";
+import { Urls } from "./router";
 import { userState } from "../atoms/user";
-import { useEffect } from "react";
 import { storage } from "../utils/storage";
-import { redirect } from "react-router-dom";
 import Lobby from "../components/Lobby";
-import { fetchGetUser } from "../service/apis";
+import { fetchGetExam, fetchGetUser } from "../service/apis";
+import isAuthentificated from "../utils/authentificate";
+import { toastError } from "../utils/toastError";
+import { examState } from "../atoms/exam";
 
-export default function lobby() {
+export const loaderLobby = async () => {
+  try {
+    if (!isAuthentificated()) return redirect(Urls.login);
+    const responseUser = await fetchGetUser({
+      id: storage.get("USER_ID") as string,
+    });
+    const responseExam = await fetchGetExam({
+      examId: responseUser.data.data.exam_id,
+    });
+    return { user: responseUser.data.data, exam: responseExam.data.data };
+  } catch (err) {
+    toastError(err);
+    throw err;
+  }
+};
+
+export default function lobbyPage() {
   const setUser = useSetRecoilState(userState);
+  const setExam = useSetRecoilState(examState);
+  const { user, exam } = useLoaderData() as {
+    user: UserResponse["data"];
+    exam: ExamResponse["data"];
+  };
 
-  useEffect(() => {
-    const userId = storage.get("USER_ID");
-    if (!userId) {
-      redirect("/login");
-      return;
-    }
+  setUser({
+    id: storage.get("USER_ID") as string,
+    name: user.name,
+    isTeacher: user.is_teacher,
+    examId: user.exam_id,
+  });
 
-    (async () => {
-      const {
-        data: { data: user },
-      } = await fetchGetUser({ id: userId });
-
-      setUser({
-        id: userId,
-        name: user.name,
-        isTeacher: user.is_teacher,
-        examId: user.exam_id,
-      });
-    })();
-  }, []);
+  setExam({
+    id: exam.id,
+    title: exam.name,
+    sections: exam.sections.map((section) => ({
+      title: section.name,
+      modules: section.modulars.map((module) => ({
+        title: module.name,
+        questions: module.questions.map((question) => ({
+          passage: question.passage ?? null,
+          question: question.content,
+          choices: question.choice_A
+            ? [
+                question.choice_A,
+                question.choice_B,
+                question.choice_C,
+                question.choice_D,
+              ]
+            : null,
+        })),
+      })),
+    })),
+  });
 
   return (
     <>

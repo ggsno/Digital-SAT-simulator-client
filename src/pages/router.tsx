@@ -1,7 +1,7 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
+import ExamPage, { loaderExam } from "./exam";
+import LobbyPage, { loaderLobby } from "./lobby";
 import isAuthentificated from "../utils/authentificate";
-import ExamPage from "./exam";
-import LobbyPage from "./lobby";
 import Login from "../components/Login";
 
 export const Urls = {
@@ -24,12 +24,12 @@ export const router = createBrowserRouter([
   },
   {
     path: Urls.lobby,
-    loader: () => (!isAuthentificated() ? redirect(Urls.login) : null),
+    loader: loaderLobby,
     element: <LobbyPage />,
   },
   {
     path: Urls.exam,
-    loader: () => (!isAuthentificated() ? redirect(Urls.login) : null),
+    loader: loaderExam,
     element: <ExamPage />,
   },
 ]);

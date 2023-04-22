@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchLogin, fetchGetUser } from "../service/apis";
 import { storage } from "../utils/storage";
-import { handleError } from "../utils/handleError";
+import { toastError } from "../utils/toastError";
 import { useSetRecoilState } from "recoil";
 import { userState } from "../atoms/user";
 
@@ -37,7 +37,7 @@ export default function Login() {
 
       navigator("/");
     } catch (err) {
-      handleError(err);
+      toastError(err);
     }
   };
 

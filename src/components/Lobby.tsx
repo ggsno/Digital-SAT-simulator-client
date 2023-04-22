@@ -5,6 +5,7 @@ import StudentLobby from "./Lobby.Student";
 
 export default function Lobby() {
   const user = useRecoilValue(userState);
+  if (!user) throw new Error("no user state");
 
   return (
     <div className="bg-gray-light min-h-screen">
@@ -19,13 +20,7 @@ export default function Lobby() {
       <div className="[&_h2]:text-3xl [&_h2]:font-bold p-10">
         <div className="flex justify-center">
           <div className="max-w-[60rem] grow">
-            {!user ? (
-              "loading ... "
-            ) : user.isTeacher ? (
-              <TeacherLobby />
-            ) : (
-              <StudentLobby />
-            )}
+            {user.isTeacher ? <TeacherLobby /> : <StudentLobby />}
           </div>
         </div>
       </div>

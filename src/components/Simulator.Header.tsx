@@ -2,7 +2,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   annotateRefState,
   annotateListState,
-  isCalulatorOpenedState,
   timerState,
   questionIndexState,
   annotateCurrentState,
@@ -10,13 +9,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { moduleState } from "./Simulator.atoms";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
+import { GraphingCalculator } from "desmos-react";
 
 const END_TIME_SECONDS = 50 * 60;
 
 export default function Header({ title }: { title: string }) {
-  const [isCalculatorOpen, setIsCalculatorOpen] = useRecoilState(
-    isCalulatorOpenedState
-  );
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
   const annotateRef = useRecoilValue(annotateRefState);
   const [module, setModule] = useRecoilState(moduleState);
@@ -145,6 +143,14 @@ export default function Header({ title }: { title: string }) {
   }
   return (
     <>
+      <GraphingCalculator
+        attributes={{
+          className: `calculator fixed top-20 left-0 h-[80vh] w-full z-20 ${
+            isCalculatorOpen ? "block" : "hidden"
+          }
+      `,
+        }}
+      />
       {isCommentPopupOpened && (
         <AnnotateCommentPopup
           closePopup={() => {
