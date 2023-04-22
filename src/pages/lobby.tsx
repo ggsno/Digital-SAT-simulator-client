@@ -40,28 +40,30 @@ export default function lobbyPage() {
     examId: user.exam_id,
   });
 
-  setExam({
-    id: exam.id,
-    title: exam.name,
-    sections: exam.sections.map((section) => ({
-      title: section.name,
-      modules: section.modulars.map((module) => ({
-        title: module.name,
-        questions: module.questions.map((question) => ({
-          passage: question.passage ?? null,
-          question: question.content,
-          choices: question.choice_A
-            ? [
-                question.choice_A,
-                question.choice_B,
-                question.choice_C,
-                question.choice_D,
-              ]
-            : null,
+  if (exam) {
+    setExam({
+      id: exam.id,
+      title: exam.name,
+      sections: exam.sections.map((section) => ({
+        title: section.name,
+        modules: section.modulars.map((module) => ({
+          title: module.name,
+          questions: module.questions.map((question) => ({
+            passage: question.passage ?? null,
+            question: question.content,
+            choices: question.choice_A
+              ? [
+                  question.choice_A,
+                  question.choice_B,
+                  question.choice_C,
+                  question.choice_D,
+                ]
+              : null,
+          })),
         })),
       })),
-    })),
-  });
+    });
+  }
 
   return (
     <>

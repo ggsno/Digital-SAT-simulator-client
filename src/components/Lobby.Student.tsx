@@ -14,10 +14,10 @@ export default function StudentLobby() {
 
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-10">
         <h2 className="mb-2">Your Tests</h2>
         {!exam ? (
-          "no exam"
+          <div className="text-xl">no tests</div>
         ) : (
           <button onClick={startExam} className="bg-white rounded-md shadow-md">
             <h3 className="bg-[#f5f7fc] font-bold w-40 p-3 text-left">
@@ -29,6 +29,7 @@ export default function StudentLobby() {
       </div>
       <div className="mb-4">
         <h2 className="mb-2">Results</h2>
+        <div className="text-xl">no results</div>
       </div>
     </>
   );
