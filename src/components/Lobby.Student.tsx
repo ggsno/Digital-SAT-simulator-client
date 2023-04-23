@@ -23,7 +23,7 @@ export default function StudentLobby() {
             <h3 className="bg-[#f5f7fc] font-bold w-40 p-3 text-left">
               {exam.title}
             </h3>
-            <div>go to exam</div>
+            <div>click to take an exam</div>
           </button>
         )}
       </div>
