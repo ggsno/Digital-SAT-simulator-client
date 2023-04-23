@@ -12,10 +12,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <Toaster />
-      <RouterProvider router={router} />
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <Toaster />
+    <RouterProvider router={router} />
+  </RecoilRoot>
 );
