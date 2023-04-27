@@ -41,7 +41,7 @@ export default function Editor() {
     select: ({ data }) => data.data,
   });
   const mutateExam = useMutation(fetchPostExam, {
-    onSuccess: () => queryClient.invalidateQueries("exams"),
+    onSuccess: () => queryClient.invalidateQueries(["exams"]),
   }).mutate;
   const getExamId = () => {
     const id = exams?.find((e) => e.name === curExamTitle)?.id;
@@ -61,6 +61,7 @@ export default function Editor() {
 
   const handlePostNewExam = () => {
     mutateExam({ name: newExamTitle });
+    alert("시험이 추가되었습니다.");
   };
 
   const handleSave = () => {
@@ -116,6 +117,10 @@ export default function Editor() {
       curQuestionNumber
     ) {
       if (!editorsRef.current) throw new Error("no editor ref");
+      const questions =
+        exam.sections[getSectionIndex()].modulars[getModuleIndex()].questions;
+      if (Number(curQuestionNumber) > questions.length) return;
+
       const question =
         exam.sections[getSectionIndex()].modulars[getModuleIndex()].questions[
           getQuestionIndex()
@@ -123,14 +128,23 @@ export default function Editor() {
       if (question.passage) {
         setHasPassage(true);
         editorsRef.current.passage.setContents(question.passage);
-      } else setHasPassage(false);
+      } else {
+        setHasPassage(false);
+        editorsRef.current.passage.setContents("");
+      }
       if (question.choice_A) {
         setHasChoices(true);
         editorsRef.current.choiceA.setContents(question.choice_A);
         editorsRef.current.choiceB.setContents(question.choice_B);
         editorsRef.current.choiceC.setContents(question.choice_C);
         editorsRef.current.choiceD.setContents(question.choice_D);
-      } else setHasChoices(false);
+      } else {
+        setHasChoices(false);
+        editorsRef.current.choiceA.setContents("");
+        editorsRef.current.choiceB.setContents("");
+        editorsRef.current.choiceC.setContents("");
+        editorsRef.current.choiceD.setContents("");
+      }
       editorsRef.current.question.setContents(question.content);
       setCorrectAnswer(question.correct_answer);
     }
@@ -201,29 +215,32 @@ export default function Editor() {
         <tbody>
           <tr className="[&_select]:w-full">
             <td>
-              <select onChange={(e) => setCurExamTitle(e.target.value)}>
-                <option disabled selected>
-                  선택
-                </option>
+              <select
+                onChange={(e) => setCurExamTitle(e.target.value)}
+                value={curExamTitle ?? "선택해주세요"}
+              >
+                <option disabled>선택해주세요</option>
                 {exams?.map((exam) => (
                   <option key={"examOption" + exam.id}>{exam.name}</option>
                 ))}
               </select>
             </td>
             <td>
-              <select onChange={(e) => setCurSectionTitle(e.target.value)}>
-                <option disabled selected>
-                  선택
-                </option>
+              <select
+                onChange={(e) => setCurSectionTitle(e.target.value)}
+                value={curSectionTitle ?? "선택해주세요"}
+              >
+                <option disabled>선택해주세요</option>
                 <option>Reading and Writing</option>
                 <option>Math</option>
               </select>
             </td>
             <td>
-              <select onChange={(e) => setCurModuleNumber(e.target.value)}>
-                <option disabled selected>
-                  선택
-                </option>
+              <select
+                onChange={(e) => setCurModuleNumber(e.target.value)}
+                value={curModuleNumber ?? "선택해주세요"}
+              >
+                <option disabled>선택해주세요</option>
                 <option>1</option>
                 <option>2</option>
               </select>
@@ -231,11 +248,9 @@ export default function Editor() {
             <td>
               <select
                 onChange={(e) => setCurQuestionNumber(e.target.value)}
-                value={curQuestionNumber ?? "선택"}
+                value={curQuestionNumber ?? "선택해주세요"}
               >
-                <option disabled selected>
-                  선택
-                </option>
+                <option disabled>선택해주세요</option>
                 {exam &&
                   curExamTitle &&
                   curSectionTitle &&
@@ -268,6 +283,7 @@ export default function Editor() {
             <input
               type="checkbox"
               onChange={() => setHasPassage(!hasPassage)}
+              checked={!hasPassage}
             />
             no passage
           </label>
@@ -275,6 +291,7 @@ export default function Editor() {
             <input
               type="checkbox"
               onChange={() => setHasChoices(!hasChoices)}
+              checked={!hasChoices}
             />
             no choices
           </label>
