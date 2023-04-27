@@ -6,14 +6,19 @@ import { RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { worker } from "../mocks/browser";
 import { router } from "./pages/router";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 if (process.env.NODE_ENV === "development") {
   worker.start();
 }
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <RecoilRoot>
-    <Toaster />
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </RecoilRoot>
 );
