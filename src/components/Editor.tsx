@@ -179,7 +179,7 @@ export default function Editor() {
     <>
       <button
         onClick={(e) => {
-          if (confirm("저장하지 않고 홈으로 이동하시겠습니까?")) {
+          if (confirm("홈으로 이동하시겠습니까?")) {
             navigator(Urls.lobby);
           } else {
             e.preventDefault();

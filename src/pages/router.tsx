@@ -4,6 +4,7 @@ import LobbyPage, { loaderLobby } from "./lobby";
 import isAuthentificated from "../utils/authentificate";
 import Login from "../components/Login";
 import Editor from "../components/Editor";
+import ReviewPage, { loaderReview } from "./review";
 
 export const Urls = {
   root: "/",
@@ -11,6 +12,7 @@ export const Urls = {
   lobby: "/lobby",
   exam: "/exam",
   editor: "/editor",
+  review: "/review",
 };
 
 export const router = createBrowserRouter([
@@ -38,5 +40,10 @@ export const router = createBrowserRouter([
     path: Urls.editor,
     loader: () => (!isAuthentificated() ? redirect(Urls.login) : null),
     element: <Editor />,
+  },
+  {
+    path: Urls.review,
+    loader: loaderReview,
+    element: <ReviewPage />,
   },
 ]);

@@ -39,7 +39,7 @@ export type AllUsersResponse = {
   }>;
 };
 
-type Exam = {
+export type Exam = {
   id: number;
   name: string;
   sections: Array<{
@@ -80,5 +80,29 @@ export type ExamResponse = {
 export type AllExamResponse = {
   result: boolean;
   message: string;
+  count: number;
+  data: Array<{ id: number; name: string }>;
+};
+
+type Review = {
+  exam_id: number;
+  answers: Array<{
+    section_id: number;
+    modular_id: number;
+    question_id: number;
+    answer: string;
+  }>;
+};
+
+export type ReviewResponse = {
+  result: boolean;
+  message: string;
+  data: Review;
+};
+
+export type AllReviewResponse = {
+  result: boolean;
+  message: string;
+  count: number;
   data: Array<{ id: number; name: string }>;
 };

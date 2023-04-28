@@ -8,8 +8,14 @@ export default function StudentLobby() {
   const setModule = useSetRecoilState(moduleState);
   const navigator = useNavigate();
   const startExam = () => {
-    setModule(exam!.sections[0].modules[0]);
-    navigator("/exam");
+    if (confirm("시험을 시작하시겠습니까?")) {
+      setModule(exam!.sections[0].modules[0]);
+      navigator("/exam");
+    }
+  };
+
+  const TEMPgoReview = () => {
+    navigator("/review?exam-id=1");
   };
 
   return (
@@ -29,7 +35,17 @@ export default function StudentLobby() {
       </div>
       <div className="mb-4">
         <h2 className="mb-2">Results</h2>
-        <div className="text-xl">no results</div>
+        {/* {!exam ? (
+          <div className="text-xl">no results</div>
+        ) : ( */}
+        <button
+          onClick={TEMPgoReview}
+          className="bg-white rounded-md shadow-md"
+        >
+          <h3 className="bg-[#f5f7fc] font-bold w-40 p-3 text-left">temp</h3>
+          <div>View My Responses</div>
+        </button>
+        {/* )} */}
       </div>
     </>
   );

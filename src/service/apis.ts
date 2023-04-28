@@ -2,10 +2,12 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 import { storage } from "../utils/storage";
 import {
   AllExamResponse,
+  AllReviewResponse,
   AllUsersResponse,
   AuthLoginRequest,
   AuthLoginResponse,
   ExamResponse,
+  ReviewResponse,
   UserResponse,
 } from "./types";
 
@@ -44,4 +46,16 @@ export const fetchGetExam = ({ examId }: { examId: number }) => {
 
 export const fetchGetAllExams = () => {
   return instanceWithAuth.get<AllExamResponse>(`/exams`);
+};
+
+export const fetchPostExam = (props: { name: string }) => {
+  return instanceWithAuth.post(`/exams`, props);
+};
+
+export const fetchGetReview = ({ examId }: { examId: string }) => {
+  return instanceWithAuth.get<ReviewResponse>(`/question-results/${examId}`);
+};
+
+export const fetchGetAllReviews = () => {
+  return instanceWithAuth.get<AllReviewResponse>(`/question-results`);
 };
