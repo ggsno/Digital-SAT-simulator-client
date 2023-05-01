@@ -28,7 +28,6 @@ export const optionEliminatorState = atom<{
 });
 
 export const moduleState = atom<{
-  title: string;
   questions: {
     passage: string | null;
     question: string;

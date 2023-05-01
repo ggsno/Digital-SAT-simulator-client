@@ -6,7 +6,6 @@ export const examState = atom<{
   sections: {
     title: string;
     modules: {
-      title: string;
       questions: {
         passage: string | null;
         question: string;
@@ -15,6 +14,6 @@ export const examState = atom<{
     }[];
   }[];
 } | null>({
-  key: "Exama",
+  key: "Exam",
   default: null,
 });

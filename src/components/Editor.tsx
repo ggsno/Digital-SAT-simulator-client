@@ -5,10 +5,20 @@ import "suneditor/dist/css/suneditor.min.css";
 import plugins from "suneditor/src/plugins";
 import katex from "katex";
 import "katex/dist/katex.min.css";
-import { useNavigate } from "react-router-dom";
-import { fetchGetAllExams, fetchGetExam, fetchPostExam } from "../service/apis";
 import SunEditor from "suneditor/src/lib/core";
 import Layout from "./Layout";
+import {
+  fetchGetAllExams,
+  fetchGetExam,
+  fetchPostExam,
+  fetchPutQuestion,
+} from "../service/exam";
+import {
+  QUESTION_COUNT_PER_MATH,
+  QUESTION_COUNT_PER_READING_AND_WRITING,
+  SECTION_TITLES,
+} from "../utils/constants";
+import { toast } from "react-hot-toast";
 
 export default function Editor() {
   const [newExamTitle, setNewExamTitle] = useState("");
@@ -50,7 +60,7 @@ export default function Editor() {
 
   const { data: exam } = useQuery(
     ["exam", curExamTitle],
-    () => fetchGetExam({ examId: getExamId() }),
+    () => fetchGetExam({ examId: getExamId().toString() }),
     {
       select: ({ data }) => data.data,
       enabled: !!exams && !!curExamTitle,
@@ -58,14 +68,19 @@ export default function Editor() {
   );
 
   const handlePostNewExam = () => {
-    mutateExam({ name: newExamTitle });
-    alert("시험이 추가되었습니다.");
+    mutateExam({ title: newExamTitle });
+    toast("시험이 추가되었습니다.");
   };
 
-  const handleSave = () => {
-    const TEMP_SAVE_API = () => {
-      if (!editorsRef.current) throw new Error("no editor ref");
-      const TEMP = {
+  const handleSave = async () => {
+    curExamTitle;
+    if (!editorsRef.current) throw new Error("no editor ref");
+    await fetchPutQuestion({
+      examId: exam!.id,
+      sectionTitle: curSectionTitle!,
+      moduleNumber: Number(curModuleNumber)!,
+      questionNumber: Number(curQuestionNumber)!,
+      body: {
         passage: hasPassage
           ? editorsRef.current.passage.getContents(true)
           : null,
@@ -83,23 +98,27 @@ export default function Editor() {
           ? editorsRef.current.choiceD.getContents(true)
           : null,
         correct_answer: correctAnswer,
-      };
-      console.log(TEMP);
-    };
-
-    TEMP_SAVE_API();
-  };
-
-  const getSectionIndex = () => {
-    return curSectionTitle === "Reading and Writing" ? 0 : 1;
-  };
-
-  const getModuleIndex = () => {
-    return Number(curModuleNumber) - 1;
+      },
+    });
+    toast.success("저장완료");
+    queryClient.invalidateQueries(["exam"]);
   };
 
   const getQuestionIndex = () => {
-    return Number(curQuestionNumber) - 1;
+    let index = Number(curQuestionNumber) - 1;
+    if (curSectionTitle === SECTION_TITLES[0]) {
+      if (curModuleNumber === "1") return index;
+      if (curModuleNumber === "2")
+        return index + QUESTION_COUNT_PER_READING_AND_WRITING / 2;
+      throw new Error("invalid module number");
+    }
+    index += QUESTION_COUNT_PER_READING_AND_WRITING;
+    if (curSectionTitle === SECTION_TITLES[1]) {
+      if (curModuleNumber === "1") return index;
+      if (curModuleNumber === "2") return index + QUESTION_COUNT_PER_MATH / 2;
+      throw new Error("invalid module number");
+    }
+    throw new Error("invalid section title");
   };
 
   useEffect(() => {
@@ -115,27 +134,23 @@ export default function Editor() {
       curQuestionNumber
     ) {
       if (!editorsRef.current) throw new Error("no editor ref");
-      const questions =
-        exam.sections[getSectionIndex()].modulars[getModuleIndex()].questions;
+      const questions = exam.questions;
       if (Number(curQuestionNumber) > questions.length) return;
 
-      const question =
-        exam.sections[getSectionIndex()].modulars[getModuleIndex()].questions[
-          getQuestionIndex()
-        ];
-      if (question.passage) {
+      const question = questions[getQuestionIndex()];
+      if (question.passage !== null) {
         setHasPassage(true);
         editorsRef.current.passage.setContents(question.passage);
       } else {
         setHasPassage(false);
         editorsRef.current.passage.setContents("");
       }
-      if (question.choice_A) {
+      if (question.choice_A !== null) {
         setHasChoices(true);
         editorsRef.current.choiceA.setContents(question.choice_A);
-        editorsRef.current.choiceB.setContents(question.choice_B);
-        editorsRef.current.choiceC.setContents(question.choice_C);
-        editorsRef.current.choiceD.setContents(question.choice_D);
+        editorsRef.current.choiceB.setContents(question.choice_B!);
+        editorsRef.current.choiceC.setContents(question.choice_C!);
+        editorsRef.current.choiceD.setContents(question.choice_D!);
       } else {
         setHasChoices(false);
         editorsRef.current.choiceA.setContents("");
@@ -234,7 +249,10 @@ export default function Editor() {
             </td>
             <td>
               <select
-                onChange={(e) => setCurQuestionNumber(e.target.value)}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setCurQuestionNumber(e.target.value);
+                }}
                 value={curQuestionNumber ?? "선택해주세요"}
               >
                 <option disabled>선택해주세요</option>
@@ -242,13 +260,15 @@ export default function Editor() {
                   curExamTitle &&
                   curSectionTitle &&
                   curModuleNumber &&
-                  exam.sections[getSectionIndex()].modulars[
-                    getModuleIndex()
-                  ].questions.map((question, i) => (
-                    <option key={"questionOption" + i}>
-                      {question.number}
-                    </option>
-                  ))}
+                  Array(
+                    curSectionTitle === SECTION_TITLES[0]
+                      ? QUESTION_COUNT_PER_READING_AND_WRITING / 2
+                      : QUESTION_COUNT_PER_MATH / 2
+                  )
+                    .fill(0)
+                    .map((_, i) => (
+                      <option key={"questionOption" + i}>{i + 1}</option>
+                    ))}
               </select>
             </td>
           </tr>

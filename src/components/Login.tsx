@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchLogin, fetchGetUser } from "../service/apis";
 import { storage } from "../utils/storage";
 import { toastError } from "../utils/toastError";
-import { useSetRecoilState } from "recoil";
-import { userState } from "../atoms/user";
+import { fetchPostLogin } from "../service/user";
+import { Urls } from "../pages/router";
 
 export default function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const navigator = useNavigate();
-  const setUser = useSetRecoilState(userState);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,23 +17,12 @@ export default function Login() {
         data: {
           data: { access_token },
         },
-      } = await fetchLogin({ id, password });
+      } = await fetchPostLogin({ id, password });
 
       storage.set("ACCESS_TOKEN", access_token);
       storage.set("USER_ID", id);
 
-      const {
-        data: { data: user },
-      } = await fetchGetUser({ id });
-
-      setUser({
-        id,
-        name: user.name,
-        isTeacher: user.is_teacher,
-        examId: user.exam_id,
-      });
-
-      navigator("/");
+      navigator(Urls.home);
     } catch (err) {
       toastError(err);
     }

@@ -1,13 +1,13 @@
 import { atom } from "recoil";
 
-type User = {
+type UserProps = {
   id: string;
   name: string;
   isTeacher: boolean;
-  examId: number;
+  examId: number | null;
 };
 
-export const userState = atom<User | null>({
+export const userState = atom<UserProps | null>({
   key: "User",
   default: null,
 });

@@ -43,54 +43,58 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
             className="bg-white rounded-md m-8 p-8 w-[80w] h-[90vh]"
           >
             <button onClick={() => setIsOpenReview(false)}>X</button>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: filteredReviews[reviewIndex].passage,
-              }}
-            />
+            {filteredReviews[reviewIndex].passage === null ? null : (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: filteredReviews[reviewIndex].passage!,
+                }}
+              />
+            )}
             <div
               dangerouslySetInnerHTML={{
                 __html: filteredReviews[reviewIndex].question,
               }}
             />
-            <div>
+            {filteredReviews[reviewIndex].choiceA === null ? null : (
               <div>
-                A.
-                <div
-                  className="inline-block"
-                  dangerouslySetInnerHTML={{
-                    __html: filteredReviews[reviewIndex].choiceA,
-                  }}
-                />
+                <div>
+                  A.
+                  <div
+                    className="inline-block"
+                    dangerouslySetInnerHTML={{
+                      __html: filteredReviews[reviewIndex].choiceA!,
+                    }}
+                  />
+                </div>
+                <div>
+                  B.
+                  <div
+                    className="inline-block"
+                    dangerouslySetInnerHTML={{
+                      __html: filteredReviews[reviewIndex].choiceB!,
+                    }}
+                  />
+                </div>
+                <div>
+                  C.
+                  <div
+                    className="inline-block"
+                    dangerouslySetInnerHTML={{
+                      __html: filteredReviews[reviewIndex].choiceC!,
+                    }}
+                  />
+                </div>
+                <div>
+                  D.
+                  <div
+                    className="inline-block"
+                    dangerouslySetInnerHTML={{
+                      __html: filteredReviews[reviewIndex].choiceD!,
+                    }}
+                  />
+                </div>
               </div>
-              <div>
-                B.
-                <div
-                  className="inline-block"
-                  dangerouslySetInnerHTML={{
-                    __html: filteredReviews[reviewIndex].choiceB,
-                  }}
-                />
-              </div>
-              <div>
-                C.
-                <div
-                  className="inline-block"
-                  dangerouslySetInnerHTML={{
-                    __html: filteredReviews[reviewIndex].choiceC,
-                  }}
-                />
-              </div>
-              <div>
-                D.
-                <div
-                  className="inline-block"
-                  dangerouslySetInnerHTML={{
-                    __html: filteredReviews[reviewIndex].choiceD,
-                  }}
-                />
-              </div>
-            </div>
+            )}
             <div
               className={` text-white rounded-md inline-block
               ${isCorrect() ? "bg-green-700" : "bg-red-700"} py-3 px-2`}
