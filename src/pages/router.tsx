@@ -1,6 +1,6 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import ExamPage, { loaderExam } from "./exam";
-import LobbyPage, { loaderLobby } from "./lobby";
+import HomePage, { loaderHome } from "./home";
 import isAuthentificated from "../utils/authentificate";
 import Login from "../components/Login";
 import Editor from "../components/Editor";
@@ -9,7 +9,7 @@ import ReviewPage, { loaderReview } from "./review";
 export const Urls = {
   root: "/",
   login: "/login",
-  lobby: "/lobby",
+  home: "/home",
   exam: "/exam",
   editor: "/editor",
   review: "/review",
@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
   {
     path: Urls.root,
     loader: () =>
-      !isAuthentificated() ? redirect(Urls.login) : redirect(Urls.lobby),
+      !isAuthentificated() ? redirect(Urls.login) : redirect(Urls.home),
   },
   {
     path: Urls.login,
@@ -27,9 +27,9 @@ export const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: Urls.lobby,
-    loader: loaderLobby,
-    element: <LobbyPage />,
+    path: Urls.home,
+    loader: loaderHome,
+    element: <HomePage />,
   },
   {
     path: Urls.exam,

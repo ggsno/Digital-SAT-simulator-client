@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { examState } from "../atoms/exam";
 import { moduleState } from "./Simulator.atoms";
 
-export default function StudentLobby() {
+export default function StudentHome() {
   const exam = useRecoilValue(examState);
   const setModule = useSetRecoilState(moduleState);
   const navigator = useNavigate();

@@ -68,7 +68,7 @@ export default function Footer(props: Props) {
       setModuleIndex(0);
       setSectionIndex(0);
       TEMP_POST_RESULT_API();
-      navigator(Urls.lobby);
+      navigator(Urls.home);
     }
   };
 

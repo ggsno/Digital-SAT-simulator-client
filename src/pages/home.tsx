@@ -3,14 +3,16 @@ import { redirect, useLoaderData } from "react-router-dom";
 import { Urls } from "./router";
 import { userState } from "../atoms/user";
 import { storage } from "../utils/storage";
-import Lobby from "../components/Lobby";
 import { fetchGetExam, fetchGetUser } from "../service/apis";
 import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";
 import { examState } from "../atoms/exam";
 import { ExamResponse, UserResponse } from "../service/types";
+import Layout from "../components/Layout";
+import TeacherHome from "../components/Home.Teacher";
+import StudentHome from "../components/Home.Student";
 
-export const loaderLobby = async () => {
+export const loaderHome = async () => {
   try {
     if (!isAuthentificated()) return redirect(Urls.login);
     const responseUser = await fetchGetUser({
@@ -26,7 +28,7 @@ export const loaderLobby = async () => {
   }
 };
 
-export default function lobbyPage() {
+export default function homePage() {
   const setUser = useSetRecoilState(userState);
   const setExam = useSetRecoilState(examState);
   const { user, exam } = useLoaderData() as {
@@ -66,9 +68,5 @@ export default function lobbyPage() {
     });
   }
 
-  return (
-    <>
-      <Lobby />
-    </>
-  );
+  return <Layout>{user.is_teacher ? <TeacherHome /> : <StudentHome />}</Layout>;
 }

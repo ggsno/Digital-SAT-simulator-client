@@ -5,6 +5,7 @@ import isAuthentificated from "../utils/authentificate";
 import { fetchGetExam, fetchGetReview } from "../service/apis";
 import { toastError } from "../utils/toastError";
 import { Exam, ReviewResponse } from "../service/types";
+import Layout from "../components/Layout";
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {
@@ -73,16 +74,11 @@ export default function ReviewPage() {
     []
   );
 
-  const handleGoHome = () => {
-    navigator(Urls.lobby);
-  };
-
   return (
     <>
-      <header>
-        <button onClick={handleGoHome}>go home</button>
-      </header>
-      <ReviewTable reviews={reviews} />
+      <Layout>
+        <ReviewTable reviews={reviews} />
+      </Layout>
     </>
   );
 }

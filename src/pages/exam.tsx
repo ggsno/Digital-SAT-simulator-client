@@ -13,5 +13,5 @@ export const loaderExam = async () => {
 export default function ExamPage() {
   const exam = useRecoilValue(examState);
 
-  return <>{!exam ? <Navigate to={Urls.lobby} /> : <Simulator />}</>;
+  return <>{!exam ? <Navigate to={Urls.home} /> : <Simulator />}</>;
 }

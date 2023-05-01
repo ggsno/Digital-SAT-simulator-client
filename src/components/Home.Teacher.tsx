@@ -3,7 +3,7 @@ import { Urls } from "../pages/router";
 import { fetchGetAllExams, fetchGetAllUsers } from "../service/apis";
 import { useEffect, useState } from "react";
 
-export default function TeacherLobby() {
+export default function TeacherHome() {
   const navigator = useNavigate();
   const [students, setStudents] = useState<{ name: string; id: string }[]>([]);
   const [exams, setExams] = useState<{ name: string }[]>([]);

@@ -6,13 +6,11 @@ import plugins from "suneditor/src/plugins";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { useNavigate } from "react-router-dom";
-import { Urls } from "../pages/router";
 import { fetchGetAllExams, fetchGetExam, fetchPostExam } from "../service/apis";
 import SunEditor from "suneditor/src/lib/core";
+import Layout from "./Layout";
 
 export default function Editor() {
-  const navigator = useNavigate();
-
   const [newExamTitle, setNewExamTitle] = useState("");
 
   const [curExamTitle, setCurExamTitle] = useState<string | null>(null);
@@ -176,20 +174,8 @@ export default function Editor() {
   }, []);
 
   return (
-    <>
-      <button
-        onClick={(e) => {
-          if (confirm("홈으로 이동하시겠습니까?")) {
-            navigator(Urls.lobby);
-          } else {
-            e.preventDefault();
-          }
-        }}
-        className="border rounded-md py-2 px-4"
-      >
-        go home
-      </button>
-      <div className="border">
+    <Layout>
+      <div>
         <h2>시험 생성</h2>
         <label>
           시험 제목
@@ -199,10 +185,11 @@ export default function Editor() {
             className="border-b"
           />
         </label>
-        <button onClick={handlePostNewExam} className="border">
+        <button onClick={handlePostNewExam} className="border rounded-md">
           시험 추가
         </button>
       </div>
+      <hr className="my-3" />
       <table className="table-fixed w-full">
         <thead>
           <tr>
@@ -336,6 +323,6 @@ export default function Editor() {
           저장하기
         </button>
       </div>
-    </>
+    </Layout>
   );
 }
