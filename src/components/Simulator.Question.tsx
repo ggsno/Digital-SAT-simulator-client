@@ -159,6 +159,7 @@ export default function Question(props: Props) {
                   onChange={(e) => {
                     addAnswer({ answer: e.target.value });
                   }}
+                  value={answers[questionIndex] ?? ""}
                   className="border-b"
                 />
               ) : (
