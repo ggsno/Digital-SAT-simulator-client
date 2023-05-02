@@ -6,11 +6,10 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
   const [isOpenReview, setIsOpenReview] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
 
+  const currentReview = filteredReviews[reviewIndex];
+
   const isCorrect = () => {
-    return (
-      filteredReviews[reviewIndex].yourAnswer ===
-      filteredReviews[reviewIndex].correctAnswer
-    );
+    return currentReview.yourAnswer === currentReview.correctAnswer;
   };
 
   const handleReview = (index: number) => {
@@ -34,83 +33,109 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
           onClick={() => {
             setIsOpenReview(false);
           }}
-          className=" bg-[#00000099] absolute top-0 left-0 w-screen h-screen"
+          className=" bg-[#00000099] fixed top-0 left-0 w-screen h-screen"
         >
           <div
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className="bg-white rounded-md m-8 p-8 w-[80w] h-[90vh]"
+            className="bg-white rounded-md m-8 p-8 w-[80w] h-[90vh] relative"
           >
-            <button onClick={() => setIsOpenReview(false)}>X</button>
-            {filteredReviews[reviewIndex].passage === null ? null : (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: filteredReviews[reviewIndex].passage!,
-                }}
-              />
-            )}
-            <div
-              dangerouslySetInnerHTML={{
-                __html: filteredReviews[reviewIndex].question,
-              }}
-            />
-            {filteredReviews[reviewIndex].choiceA === null ? null : (
-              <div>
-                <div>
-                  A.
-                  <div
-                    className="inline-block"
-                    dangerouslySetInnerHTML={{
-                      __html: filteredReviews[reviewIndex].choiceA!,
-                    }}
-                  />
+            <div className="w-full flex justify-between mb-4">
+              <h2>
+                {currentReview.section}: Question {currentReview.number}
+              </h2>
+              <button onClick={() => setIsOpenReview(false)}>
+                <img src="/image/exit.png" className="w-5 h-5" />
+              </button>
+            </div>
+            <div className={`flex overflow-auto h-[65vh] gap-10`}>
+              {currentReview.passage === null ? null : (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: currentReview.passage!,
+                  }}
+                  className="basis-1/2"
+                />
+              )}
+              <div className={`${currentReview.passage ? "basis-1/2" : null} `}>
+                <div className="bg-[#656463] h-8 w-8 leading-9 text-center text-white ">
+                  {currentReview.number}
                 </div>
-                <div>
-                  B.
-                  <div
-                    className="inline-block"
-                    dangerouslySetInnerHTML={{
-                      __html: filteredReviews[reviewIndex].choiceB!,
-                    }}
-                  />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: currentReview.question,
+                  }}
+                  className="mb-5 ml-9 mt-3"
+                />
+                <div className="ml-7">
+                  {currentReview.choiceA === null ? null : (
+                    <div>
+                      <div className="flex gap-1">
+                        A.
+                        <div
+                          className="inline-block"
+                          dangerouslySetInnerHTML={{
+                            __html: currentReview.choiceA!,
+                          }}
+                        />
+                      </div>
+                      <div className="flex gap-1">
+                        B.
+                        <div
+                          className="inline-block"
+                          dangerouslySetInnerHTML={{
+                            __html: currentReview.choiceB!,
+                          }}
+                        />
+                      </div>
+                      <div className="flex gap-1">
+                        C.
+                        <div
+                          className="inline-block"
+                          dangerouslySetInnerHTML={{
+                            __html: currentReview.choiceC!,
+                          }}
+                        />
+                      </div>
+                      <div className="flex gap-1">
+                        D.
+                        <div
+                          className="inline-block"
+                          dangerouslySetInnerHTML={{
+                            __html: currentReview.choiceD!,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  C.
-                  <div
-                    className="inline-block"
-                    dangerouslySetInnerHTML={{
-                      __html: filteredReviews[reviewIndex].choiceC!,
-                    }}
-                  />
-                </div>
-                <div>
-                  D.
-                  <div
-                    className="inline-block"
-                    dangerouslySetInnerHTML={{
-                      __html: filteredReviews[reviewIndex].choiceD!,
-                    }}
-                  />
+                <div
+                  className={` text-white rounded-md inline-block
+              ${isCorrect() ? "bg-green-700" : "bg-red-700"} py-3 px-2 mt-5`}
+                >
+                  {currentReview.yourAnswer === ""
+                    ? "You omitted this qustion."
+                    : isCorrect()
+                    ? "You selected the correct answer."
+                    : `You selected answer ${currentReview.yourAnswer}. `}
+                  The correct answer is {currentReview.correctAnswer}.
                 </div>
               </div>
-            )}
-            <div
-              className={` text-white rounded-md inline-block
-              ${isCorrect() ? "bg-green-700" : "bg-red-700"} py-3 px-2`}
-            >
-              {filteredReviews[reviewIndex].yourAnswer === ""
-                ? "You omitted this qustion."
-                : isCorrect()
-                ? "You selected the correct answer."
-                : `You selected answer ${filteredReviews[reviewIndex].yourAnswer}`}
-              The correct answer is {filteredReviews[reviewIndex].correctAnswer}
             </div>
-            <div>
-              <button onClick={goPrev} disabled={!canGoPrev}>
+            <div className="absolute bottom-5 right-5 w-full flex justify-end">
+              <button
+                onClick={goPrev}
+                disabled={!canGoPrev}
+                className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
+              >
                 Previous
               </button>
-              <button onClick={goNext} disabled={!canGoNext}>
+              <button
+                onClick={goNext}
+                disabled={!canGoNext}
+                className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
+              >
                 Next
               </button>
             </div>
