@@ -68,7 +68,7 @@ export default function ReviewPage() {
 
   return (
     <>
-      <Layout>
+      <Layout isWhiteBg={true}>
         <ReviewTable reviews={reviews} />
       </Layout>
     </>
