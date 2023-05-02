@@ -5,7 +5,6 @@ import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";
 import Layout from "../components/Layout";
 import {
-  GetExamAnswersResponse,
   GetExamResponse,
   fetchGetExam,
   fetchGetExamResults,
