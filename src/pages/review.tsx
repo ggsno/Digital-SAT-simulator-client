@@ -51,13 +51,13 @@ export type ReviewProps = {
 export default function ReviewPage() {
   const { questions, answers } = useLoaderData() as {
     questions: GetExamResponse["data"]["questions"];
-    answers: GetExamAnswersResponse["data"]["question_results"];
+    answers: string[];
   };
 
   const reviews = questions.map((question, i) => ({
     number: i + 1,
     section: question.section,
-    yourAnswer: answers[i].your_answer,
+    yourAnswer: answers[i],
     passage: question.passage,
     question: question.content,
     choiceA: question.choice_A,
@@ -66,34 +66,6 @@ export default function ReviewPage() {
     choiceD: question.choice_D,
     correctAnswer: question.correct_answer,
   }));
-
-  // let questionIndex = 0;
-  // const reviews = exam.sections.reduce<ReviewProps[]>(
-  //   (accSection, curSection) => {
-  //     const moduleReviews = curSection.modulars.reduce<ReviewProps[]>(
-  //       (accModule, curModule) => {
-  //         const reviews = curModule.questions.map((question) => ({
-  //           number: questionIndex + 1,
-  //           section: curSection.name,
-  //           correctAnswer: question.correct_answer,
-  //           yourAnswer: answers[questionIndex++],
-  //           passage: question.passage,
-  //           question: question.content,
-  //           choiceA: question.choice_A,
-  //           choiceB: question.choice_B,
-  //           choiceC: question.choice_C,
-  //           choiceD: question.choice_D,
-  //         }));
-
-  //         return [...accModule, ...reviews] as ReviewProps[];
-  //       },
-  //       []
-  //     );
-
-  //     return [...accSection, ...moduleReviews];
-  //   },
-  //   []
-  // );
 
   return (
     <>

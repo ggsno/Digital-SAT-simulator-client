@@ -41,7 +41,7 @@ export default function Simulator() {
   useEffect(() => {
     const newModule = exam.sections[sectionIndex].modules[moduleIndex];
     setModule(newModule);
-    setAnswers(Array(newModule.questions.length).fill(null));
+    setAnswers(Array(newModule.questions.length).fill(""));
     resetReview();
     resetOptionEliminator();
     resetAnnoateList();
@@ -67,7 +67,7 @@ export default function Simulator() {
               choices={module.questions[questionIndex].choices}
             />
           ) : (
-            <Review />
+            <Review title={exam.sections[sectionIndex].title} />
           )}
           <Footer
             userName={user!.name}

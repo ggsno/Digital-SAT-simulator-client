@@ -1,12 +1,6 @@
-import { useRecoilValue } from "recoil";
 import Navigator from "./Simulator.Navigator";
-import { moduleState } from "./Simulator.atoms";
 
-export default function Review() {
-  const module = useRecoilValue(moduleState);
-  if (!module) throw new Error("no module state : result page");
-
-  const { title } = module;
+export default function Review({ title }: { title: string }) {
   return (
     <div className="h-[calc(100vh_-_173px)] flex flex-col items-center">
       <h2 className="text-3xl my-5">Check Your Work</h2>

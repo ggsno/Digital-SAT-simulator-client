@@ -53,7 +53,7 @@ export const sectionIndexState = atom({
   default: 0,
 });
 
-export const answerState = atom<(string | null)[]>({
+export const answerState = atom<string[]>({
   key: "Answer",
   default: [],
 });

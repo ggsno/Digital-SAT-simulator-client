@@ -11,6 +11,7 @@ import Popup from "./Simulator.Footer.Popup";
 import { examState } from "../atoms/exam";
 import { useNavigate } from "react-router-dom";
 import { Urls } from "../pages/router";
+import { fetchPostExamResults } from "../service/exam";
 
 type Props = {
   userName: string;
@@ -32,6 +33,8 @@ export default function Footer(props: Props) {
   if (!exam) throw new Error("no exam state");
   const navigator = useNavigate();
 
+  const answerAccumulator = useRef<string[]>([]);
+
   const handleGoPrev = () => {
     setQuestionIndex(questionIndex - 1);
   };
@@ -41,8 +44,8 @@ export default function Footer(props: Props) {
     const moduleLength = exam.sections[sectionIndex].modules.length;
     const sectionLength = exam.sections.length;
 
-    // POST exam result api
-    const TEMP_POST_RESULT_API = () => {
+    const accumulateAnswer = () => {
+      answerAccumulator.current = [...answerAccumulator.current, ...answer];
       alert(
         "제출되었습니다.\n" +
           answer.reduce(
@@ -55,11 +58,11 @@ export default function Footer(props: Props) {
     if (questionIndex < questionLength) {
       setQuestionIndex(questionIndex + 1);
     } else if (moduleIndex + 1 < moduleLength) {
-      TEMP_POST_RESULT_API();
+      accumulateAnswer();
       setQuestionIndex(0);
       setModuleIndex(moduleIndex + 1);
     } else if (sectionIndex + 1 < sectionLength) {
-      TEMP_POST_RESULT_API();
+      accumulateAnswer();
       setQuestionIndex(0);
       setModuleIndex(0);
       setSectionIndex(sectionIndex + 1);
@@ -67,7 +70,8 @@ export default function Footer(props: Props) {
       setQuestionIndex(0);
       setModuleIndex(0);
       setSectionIndex(0);
-      TEMP_POST_RESULT_API();
+      accumulateAnswer();
+      fetchPostExamResults({ answers: answerAccumulator.current });
       navigator(Urls.home);
     }
   };

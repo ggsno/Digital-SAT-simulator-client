@@ -42,7 +42,7 @@ export default function Question(props: Props) {
 
   const resetAnswer = () => {
     const newAnswers = answers.slice();
-    newAnswers.splice(questionIndex, 1, null);
+    newAnswers.splice(questionIndex, 1, "");
     setAnswers(newAnswers);
   };
 
