@@ -10,9 +10,11 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    storage.remove("ACCESS_TOKEN");
-    storage.remove("USER_ID");
-    navigator(Urls.login);
+    if (confirm("로그아웃 하시겠습니까?")) {
+      storage.remove("ACCESS_TOKEN");
+      storage.remove("USER_ID");
+      navigator(Urls.login);
+    }
   };
 
   return (

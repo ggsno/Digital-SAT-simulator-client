@@ -73,7 +73,6 @@ export default function Editor() {
   };
 
   const handleSave = async () => {
-    curExamTitle;
     if (!editorsRef.current) throw new Error("no editor ref");
     await fetchPutQuestion({
       examId: exam!.id,
@@ -100,7 +99,12 @@ export default function Editor() {
         correct_answer: correctAnswer,
       },
     });
-    toast.success("저장완료");
+    if (
+      (correctAnswer === "" || correctAnswer === null) &&
+      !confirm("정답을 입력하지 않았습니다. 저장하시겠습니까?")
+    ) {
+      return;
+    } else toast.success("저장완료");
     queryClient.invalidateQueries(["exam"]);
   };
 
@@ -306,22 +310,24 @@ export default function Editor() {
 
         <div className={`${hasPassage ? "sm:flex" : null}`}>
           <div
-            className={`${hasPassage ? null : "hidden"} w-screen sm:w-[47vw]`}
+            className={`${hasPassage ? null : "hidden"} w-[90vw] sm:w-[47vw]`}
           >
             <h2>Passage</h2>
             <textarea id="passage" />
           </div>
-          <div>
-            <div className={`w-screen ${hasPassage ? "sm:w-[47vw]" : null}`}>
+          <div
+            className={`w-[90vw] ${
+              hasPassage ? "sm:w-[47vw]" : null
+            } max-w-4xl`}
+          >
+            <div>
               <h2>Question</h2>
               <textarea id="question" />
             </div>
             {["choiceA", "choiceB", "choiceC", "choiceD"].map((choice) => (
               <div
                 key={"editor" + choice}
-                className={`${
-                  hasChoices ? null : "hidden"
-                } w-screen sm:w-[47vw]`}
+                className={`${hasChoices ? null : "hidden"}`}
               >
                 <h2>{choice}</h2>
                 <textarea id={choice} />
@@ -331,7 +337,8 @@ export default function Editor() {
             <input
               type="text"
               onChange={(e) => setCorrectAnswer(e.target.value)}
-              className="border"
+              value={correctAnswer}
+              className="border px-2"
             />
           </div>
         </div>
