@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useRecoilState,
   useRecoilValue,
@@ -22,6 +22,7 @@ import {
 import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
 import { examState } from "../atoms/exam";
+import Breaktime from "./Simulator.Breaktime";
 
 export default function Simulator() {
   const exam = useRecoilValue(examState);
@@ -38,20 +39,30 @@ export default function Simulator() {
   const resetOptionEliminator = useResetRecoilState(optionEliminatorState);
   const resetAnnoateList = useResetRecoilState(annotateListState);
 
+  const [isBreaktime, setIsBreaktime] = useState(false);
+
   useEffect(() => {
-    const newModule = exam.sections[sectionIndex].modules[moduleIndex];
-    setModule(newModule);
-    setAnswers(Array(newModule.questions.length).fill(""));
-    resetReview();
-    resetOptionEliminator();
-    resetAnnoateList();
-    setTimer(Date.now());
+    if (moduleIndex >= 0) {
+      const newModule = exam.sections[sectionIndex].modules[moduleIndex];
+      setModule(newModule);
+      setAnswers(Array(newModule.questions.length).fill(""));
+      resetReview();
+      resetOptionEliminator();
+      resetAnnoateList();
+      setTimer(Date.now());
+    }
   }, [moduleIndex]);
+
+  useEffect(() => {
+    if (sectionIndex !== 0) setIsBreaktime(true);
+  }, [sectionIndex]);
 
   return (
     <>
       {!module ? (
         "loading ..."
+      ) : isBreaktime ? (
+        <Breaktime setIsBreaktime={setIsBreaktime} />
       ) : (
         <>
           <Header

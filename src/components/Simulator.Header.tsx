@@ -12,9 +12,9 @@ import { moduleState } from "./Simulator.atoms";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
 import { GraphingCalculator } from "desmos-react";
 import { examState } from "../atoms/exam";
+import { useGoNextQuestion } from "./Simulator.hooks";
 
 export default function Header({ title }: { title: string }) {
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
   const annotateRef = useRecoilValue(annotateRefState);
   const setAnnotateCurrent = useSetRecoilState(annotateCurrentState);
@@ -24,12 +24,15 @@ export default function Header({ title }: { title: string }) {
   if (!exam) throw new Error("no exam state");
   const questionIndex = useRecoilValue(questionIndexState);
   const sectionIndex = useRecoilValue(sectionIndexState);
+  const startTime = useRecoilValue(timerState);
 
-  const selectionRef = useRef<Selection | null>(null);
-  const [time, setTime] = useState(32 * 60);
+  const { goNextQuestion } = useGoNextQuestion();
+
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [time, setTime] = useState(sectionIndex === 1 ? 35 * 60 : 32 * 60);
   const [isCommentPopupOpened, setIsCommentPopupOpened] = useState(false);
 
-  const startTime = useRecoilValue(timerState);
+  const selectionRef = useRef<Selection | null>(null);
 
   const handleCalculatorClick = () => {
     setIsCalculatorOpen(!isCalculatorOpen);
@@ -108,6 +111,7 @@ export default function Header({ title }: { title: string }) {
       }
       if (startTime !== null && startTime + endTime * 1000 - Date.now() < 0) {
         clearInterval(timer);
+        goNextQuestion({ isTimeout: true });
       }
     };
     const timer = setInterval(callback, 1000);
