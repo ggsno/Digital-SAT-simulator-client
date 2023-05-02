@@ -5,6 +5,7 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
   const [filteredReviews, setFilteredReviews] = useState(reviews);
   const [isOpenReview, setIsOpenReview] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [isHideCorrectAnswer, setIsHideCorrectAnswer] = useState(false);
 
   const currentReview = filteredReviews[reviewIndex];
 
@@ -110,34 +111,51 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
                     </div>
                   )}
                 </div>
-                <div
-                  className={` text-white rounded-md inline-block
+                {isHideCorrectAnswer ? null : (
+                  <div
+                    className={` text-white rounded-md inline-block
               ${isCorrect() ? "bg-green-700" : "bg-red-700"} py-3 px-2 mt-5`}
-                >
-                  {currentReview.yourAnswer === ""
-                    ? "You omitted this qustion."
-                    : isCorrect()
-                    ? "You selected the correct answer."
-                    : `You selected answer ${currentReview.yourAnswer}. `}
-                  The correct answer is {currentReview.correctAnswer}.
-                </div>
+                  >
+                    {currentReview.yourAnswer === ""
+                      ? "You omitted this qustion."
+                      : isCorrect()
+                      ? "You selected the correct answer."
+                      : `You selected answer ${currentReview.yourAnswer}. `}
+                    The correct answer is {currentReview.correctAnswer}.
+                  </div>
+                )}
               </div>
             </div>
-            <div className="absolute bottom-5 right-5 w-full flex justify-end">
-              <button
-                onClick={goPrev}
-                disabled={!canGoPrev}
-                className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
-              >
-                Previous
-              </button>
-              <button
-                onClick={goNext}
-                disabled={!canGoNext}
-                className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
-              >
-                Next
-              </button>
+            <div className="w-full flex justify-between bg-white pt-5">
+              <div>
+                <label className="flex items-center select-none hover:cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isHideCorrectAnswer}
+                    onChange={() =>
+                      setIsHideCorrectAnswer(!isHideCorrectAnswer)
+                    }
+                    className="ml-2 w-5 h-5 accent-violet-blue"
+                  />
+                  <span className="ml-2 h-5">Hide correct answer</span>
+                </label>
+              </div>
+              <div>
+                <button
+                  onClick={goPrev}
+                  disabled={!canGoPrev}
+                  className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={goNext}
+                  disabled={!canGoNext}
+                  className={` bg-violet-blue text-white font-bold px-6 py-3 rounded-full ml-4 disabled:bg-gray-light disabled:text-gray`}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>
