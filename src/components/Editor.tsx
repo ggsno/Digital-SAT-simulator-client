@@ -58,6 +58,7 @@ export default function Editor() {
     onSuccess: () => {
       queryClient.invalidateQueries(["exams"]);
       toast.success("시험이 추가되었습니다.");
+      setNewExamTitle("");
     },
     onError: (err) => {
       toastError(err);
@@ -223,12 +224,12 @@ export default function Editor() {
       return editor;
     };
     editorsRef.current = {
-      passage: makeEditor("passage", "80vh"),
-      question: makeEditor("question", "20vh"),
-      choiceA: makeEditor("choiceA", "10vh"),
-      choiceB: makeEditor("choiceB", "10vh"),
-      choiceC: makeEditor("choiceC", "10vh"),
-      choiceD: makeEditor("choiceD", "10vh"),
+      passage: makeEditor("passage", "70vh"),
+      question: makeEditor("question", "1px"),
+      choiceA: makeEditor("choiceA", "1px"),
+      choiceB: makeEditor("choiceB", "1px"),
+      choiceC: makeEditor("choiceC", "1px"),
+      choiceD: makeEditor("choiceD", "1px"),
     };
   }, []);
 
@@ -241,6 +242,7 @@ export default function Editor() {
           <input
             type="text"
             onChange={(e) => setNewExamTitle(e.target.value)}
+            value={newExamTitle}
             className="border-b"
           />
         </label>
@@ -353,7 +355,7 @@ export default function Editor() {
           curQuestionNumber
             ? "block"
             : "hidden"
-        }`}
+        } [&_h3]:font-bold [&_h3]:text-lg`}
       >
         <div>
           <label className="mr-5">
@@ -378,7 +380,7 @@ export default function Editor() {
           <div
             className={`${hasPassage ? null : "hidden"} w-[90vw] sm:w-[47vw]`}
           >
-            <h2>Passage</h2>
+            <h3>Passage</h3>
             <textarea id="passage" />
           </div>
           <div
@@ -387,7 +389,7 @@ export default function Editor() {
             } max-w-4xl`}
           >
             <div>
-              <h2>Question</h2>
+              <h3>Question</h3>
               <textarea id="question" />
             </div>
             {["choiceA", "choiceB", "choiceC", "choiceD"].map((choice) => (
@@ -395,11 +397,11 @@ export default function Editor() {
                 key={"editor" + choice}
                 className={`${hasChoices ? null : "hidden"}`}
               >
-                <h2>{choice}</h2>
+                <h3>{choice}</h3>
                 <textarea id={choice} />
               </div>
             ))}
-            <h2>Correct Answer</h2>
+            <h3>Correct Answer</h3>
             <input
               type="text"
               onChange={(e) => setCorrectAnswer(e.target.value)}
