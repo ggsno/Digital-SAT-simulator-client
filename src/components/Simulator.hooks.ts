@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   answerAccumulatorState,
   answerState,
@@ -12,6 +12,7 @@ import { fetchPostExamResults } from "../service/exam";
 import { Urls } from "../pages/router";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { loadingState } from "../atoms/loading";
 
 export const useGoNextQuestion = () => {
   const module = useRecoilValue(moduleState);
@@ -25,6 +26,7 @@ export const useGoNextQuestion = () => {
   const [answerAccumulator, setAnswerAcculmulator] = useRecoilState(
     answerAccumulatorState
   );
+  const setLoading = useSetRecoilState(loadingState);
   const navigator = useNavigate();
 
   const goNextQuestion = async ({ isTimeout }: { isTimeout: boolean }) => {
@@ -34,8 +36,8 @@ export const useGoNextQuestion = () => {
 
     const accumulateAnswer = () => {
       setAnswerAcculmulator([...answerAccumulator, ...answer]);
-      if (isTimeout) toast.success("시간 초과로 자동 제출되었습니다.");
-      else toast.success("제출되었습니다.");
+      if (isTimeout) toast.success("시간 초과로 임시 저장되었습니다.");
+      else toast.success("임시 저장되었습니다.");
     };
 
     if (questionIndex < questionLength && !isTimeout) {
@@ -50,13 +52,15 @@ export const useGoNextQuestion = () => {
       setModuleIndex(-1);
       setSectionIndex(sectionIndex + 1);
     } else {
-      setQuestionIndex(0);
-      setModuleIndex(0);
-      setSectionIndex(0);
+      setLoading(true);
       await fetchPostExamResults({
         answers: [...answerAccumulator, ...answer],
       });
+      setLoading(false);
       toast.success("제출되었습니다");
+      setQuestionIndex(0);
+      setModuleIndex(0);
+      setSectionIndex(0);
       navigator(Urls.home);
     }
   };
