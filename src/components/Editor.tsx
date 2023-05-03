@@ -69,7 +69,7 @@ export default function Editor() {
 
   const handlePostNewExam = () => {
     mutateExam({ title: newExamTitle });
-    toast("시험이 추가되었습니다.");
+    toast.success("시험이 추가되었습니다.");
   };
 
   const handleSave = async () => {

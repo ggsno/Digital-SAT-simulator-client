@@ -52,5 +52,5 @@ export const fetchPatchAllocateExamToUser = (props: {
   user_id: string;
   exam_id: number;
 }) => {
-  return serverApiInstanceWithAuth.patch(`/users`, props);
+  return serverApiInstanceWithAuth.patch(`/users/allocate`, props);
 };

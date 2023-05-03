@@ -56,7 +56,7 @@ export const useGoNextQuestion = () => {
       await fetchPostExamResults({
         answers: [...answerAccumulator, ...answer],
       });
-
+      toast.success("제출되었습니다");
       navigator(Urls.home);
     }
   };
