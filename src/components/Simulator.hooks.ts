@@ -1,4 +1,9 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import {
   answerAccumulatorState,
   answerState,
@@ -26,6 +31,8 @@ export const useGoNextQuestion = () => {
   const [answerAccumulator, setAnswerAcculmulator] = useRecoilState(
     answerAccumulatorState
   );
+  const resetAnswerAcculmaltor = useResetRecoilState(answerAccumulatorState);
+
   const setLoading = useSetRecoilState(loadingState);
   const navigator = useNavigate();
 
@@ -58,6 +65,7 @@ export const useGoNextQuestion = () => {
       });
       setLoading(false);
       toast.success("제출되었습니다");
+      resetAnswerAcculmaltor();
       setQuestionIndex(0);
       setModuleIndex(0);
       setSectionIndex(0);

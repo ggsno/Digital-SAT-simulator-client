@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { moduleState, questionIndexState } from "./Simulator.atoms";
 import Navigator from "./Simulator.Navigator";
+import { QUESTION_COUNT_PER_MATH, SECTION_TITLES } from "../utils/constants";
 
 export default function Popup({
   popupState,
@@ -15,7 +16,10 @@ export default function Popup({
   const setQuestionIndex = useSetRecoilState(questionIndexState);
   const module = useRecoilValue(moduleState);
   if (!module) throw new Error("no module value at Footer component");
-  const { title } = module;
+  const title =
+    module.questions.length === QUESTION_COUNT_PER_MATH / 2
+      ? SECTION_TITLES[1]
+      : SECTION_TITLES[0];
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
