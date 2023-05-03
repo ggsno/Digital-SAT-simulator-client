@@ -31,6 +31,7 @@ export default function Header({ title }: { title: string }) {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [time, setTime] = useState(sectionIndex === 1 ? 35 * 60 : 32 * 60);
   const [isCommentPopupOpened, setIsCommentPopupOpened] = useState(false);
+  const [isTimeBlind, setIsTimeBlind] = useState(false);
 
   const selectionRef = useRef<Selection | null>(null);
 
@@ -172,11 +173,28 @@ export default function Header({ title }: { title: string }) {
         <h1 className="col-span-2 text-xl truncate hover:text-clip font-medium">
           {title}
         </h1>
-        <div className="text-2xl self-center justify-self-center">
-          {Math.floor(time / 60 >= 0 ? time / 60 : 0)
-            .toString()
-            .padStart(2, "0")}
-          :{(time % 60).toString().padStart(2, "0")}
+
+        <div className="self-center justify-self-center">
+          {isTimeBlind ? (
+            <img
+              src="/image/clock.png"
+              alt="blind time"
+              className="h-5 w-5 my-0 mx-auto mb-2 mt-1"
+            />
+          ) : (
+            <div className="text-2xl text-center">
+              {Math.floor(time / 60 >= 0 ? time / 60 : 0)
+                .toString()
+                .padStart(2, "0")}
+              :{(time % 60).toString().padStart(2, "0")}
+            </div>
+          )}
+          <button
+            onClick={() => setIsTimeBlind(!isTimeBlind)}
+            className="w-12 border rounded-full text-xs font-bold hover:bg-gray-light duration-300 mx-8"
+          >
+            {isTimeBlind ? "Show" : "Hide"}
+          </button>
         </div>
         <div
           className={`col-span-2 self-center justify-self-end [&>button]:mr-4`}
