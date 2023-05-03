@@ -33,6 +33,8 @@ export default function Editor() {
     null
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [hasPassage, setHasPassage] = useState(true);
   const [hasChoices, setHasChoices] = useState(true);
 
@@ -60,6 +62,9 @@ export default function Editor() {
     onError: (err) => {
       toastError(err);
     },
+    onSettled: () => {
+      setIsLoading(false);
+    },
   }).mutate;
 
   const deleteExam = useMutation(fetchDeleteExam, {
@@ -69,6 +74,9 @@ export default function Editor() {
     },
     onError: (err) => {
       toastError(err);
+    },
+    onSettled: () => {
+      setIsLoading(false);
     },
   }).mutate;
 
@@ -89,13 +97,16 @@ export default function Editor() {
   );
 
   const handlePostNewExam = () => {
+    setIsLoading(true);
     addExam({ title: newExamTitle });
   };
 
   const handleDeleteExam = () => {
+    setIsLoading(true);
     const examId = exams?.find((exam) => exam.name === deleteExamTitle)?.id;
     if (!examId) {
       toast.error("삭제할 시험을 찾을 수 없습니다.");
+      setIsLoading(false);
       return;
     }
     deleteExam({ examId: examId.toString() });
@@ -235,7 +246,8 @@ export default function Editor() {
         </label>
         <button
           onClick={handlePostNewExam}
-          className="rounded-md ml-3 mt-3 py-2 px-4 bg-violet-blue text-white text-sm"
+          className="rounded-md ml-3 mt-3 py-2 px-4 bg-violet-blue text-white text-sm disabled:bg-gray"
+          disabled={isLoading}
         >
           시험 추가
         </button>
@@ -254,7 +266,8 @@ export default function Editor() {
           </label>
           <button
             onClick={handleDeleteExam}
-            className="rounded-md py-2 px-4  bg-red-700 text-white text-sm mx-3"
+            className="rounded-md py-2 px-4  bg-red-700 text-white text-sm mx-3 disabled:bg-gray"
+            disabled={isLoading}
           >
             시험 삭제
           </button>
