@@ -8,6 +8,7 @@ export function toastError(error: unknown) {
       toast.error(error.response?.data.message);
     else if (error.response?.status === 401)
       toast.error("Invalid ID or Password");
+    else toast.error(error.message);
   } else if (error instanceof Error) {
     toast.error(error.message);
   } else {

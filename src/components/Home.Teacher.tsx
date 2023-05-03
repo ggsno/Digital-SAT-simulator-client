@@ -24,7 +24,7 @@ export default function TeacherHome() {
     select: ({ data: { data } }) => data,
   });
 
-  const [submissions, setSubmissions] = useState<
+  const [examResults, setExamResults] = useState<
     { id: string; isSubmitted: boolean }[]
   >([]);
 
@@ -34,6 +34,10 @@ export default function TeacherHome() {
   const [newStudentId, setNewStudentId] = useState("");
   const [newStudentPassword, setNewStudentPassword] = useState("");
   const [newStudentName, setNewStudentName] = useState("");
+
+  const goToReview = (userId: string, examId: string) => {
+    navigator(Urls.review + `/?user-id=${userId}&exam-id=${examId}`);
+  };
 
   const handleAllocateExamToStudent = async () => {
     try {
@@ -47,11 +51,7 @@ export default function TeacherHome() {
       }
       if (!exams) throw new Error("no exams");
       selectedStudents.forEach(async (student) => {
-        const examId = exams.find((exam) => {
-          console.log(exam.name, selectedExam);
-          return exam.name === selectedExam;
-        })?.id;
-        console.log(examId);
+        const examId = exams.find((exam) => exam.name === selectedExam)?.id;
         if (!examId) throw new Error("no exam id");
         await fetchPatchAllocateExamToUser({
           user_id: student,
@@ -105,30 +105,15 @@ export default function TeacherHome() {
   useEffect(() => {
     (async () => {
       if (students && students.length > 0) {
-        students.forEach(async (student) => {
-          const {
-            data: { data },
-          } = await fetchGetExamResults({ userId: student.id });
-          if (data) {
-            const newElement = { id: student.id, isSubmitted: true };
-            const index = submissions.findIndex(({ id }) => id === student.id);
-            if (index !== -1) {
-              submissions.splice(index, 1, newElement);
-              setSubmissions(submissions.slice());
-            } else {
-              setSubmissions([...submissions, newElement]);
-            }
-          } else {
-            const newElement = { id: student.id, isSubmitted: false };
-            const index = submissions.findIndex(({ id }) => id === student.id);
-            if (index !== -1) {
-              submissions.splice(index, 1, newElement);
-              setSubmissions(submissions.slice());
-            } else {
-              setSubmissions([...submissions, newElement]);
-            }
-          }
-        });
+        const results = await Promise.all(
+          students.map(async (student) => {
+            const {
+              data: { data },
+            } = await fetchGetExamResults({ userId: student.id });
+            return { id: student.id, isSubmitted: data !== null };
+          })
+        );
+        setExamResults(results);
       }
     })();
   }, [students]);
@@ -201,7 +186,7 @@ export default function TeacherHome() {
                 <th>ID</th>
                 <th>Student Name</th>
                 <th>Exam Title</th>
-                <th>Submission</th>
+                <th>Exam Result</th>
               </tr>
             </thead>
             <tbody>
@@ -242,12 +227,21 @@ export default function TeacherHome() {
                       </td>
                       <td>
                         {exams?.find((exam) => student.exam_id === exam.id)
-                          ?.name === undefined
-                          ? "-"
-                          : submissions.find((e) => e.id === student.id)
-                              ?.isSubmitted
-                          ? "✅"
-                          : "❌"}
+                          ?.name === undefined ? (
+                          "-"
+                        ) : examResults.find((e) => e.id === student.id)
+                            ?.isSubmitted ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              goToReview(student.id, student.exam_id.toString())
+                            }
+                          >
+                            go review
+                          </button>
+                        ) : (
+                          <span className="text-gray">not submitted</span>
+                        )}
                       </td>
                     </tr>
                   ))}

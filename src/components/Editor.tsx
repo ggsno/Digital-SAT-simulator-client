@@ -8,6 +8,7 @@ import "katex/dist/katex.min.css";
 import SunEditor from "suneditor/src/lib/core";
 import Layout from "./Layout";
 import {
+  fetchDeleteExam,
   fetchGetAllExams,
   fetchGetExam,
   fetchPostExam,
@@ -19,10 +20,12 @@ import {
   SECTION_TITLES,
 } from "../utils/constants";
 import { toast } from "react-hot-toast";
+import { toastError } from "../utils/toastError";
 
 export default function Editor() {
   const [newExamTitle, setNewExamTitle] = useState("");
 
+  const [deleteExamTitle, setDeleteExamTitle] = useState<string | null>(null);
   const [curExamTitle, setCurExamTitle] = useState<string | null>(null);
   const [curSectionTitle, setCurSectionTitle] = useState<string | null>(null);
   const [curModuleNumber, setCurModuleNumber] = useState<string | null>(null);
@@ -48,9 +51,27 @@ export default function Editor() {
   const { data: exams } = useQuery(["exams"], fetchGetAllExams, {
     select: ({ data }) => data.data,
   });
-  const mutateExam = useMutation(fetchPostExam, {
-    onSuccess: () => queryClient.invalidateQueries(["exams"]),
+
+  const addExam = useMutation(fetchPostExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["exams"]);
+      toast.success("시험이 추가되었습니다.");
+    },
+    onError: (err) => {
+      toastError(err);
+    },
   }).mutate;
+
+  const deleteExam = useMutation(fetchDeleteExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["exams"]);
+      toast.success("시험이 삭제되었습니다.");
+    },
+    onError: (err) => {
+      toastError(err);
+    },
+  }).mutate;
+
   const getExamId = () => {
     const id = exams?.find((e) => e.name === curExamTitle)?.id;
     if (!id)
@@ -68,8 +89,16 @@ export default function Editor() {
   );
 
   const handlePostNewExam = () => {
-    mutateExam({ title: newExamTitle });
-    toast.success("시험이 추가되었습니다.");
+    addExam({ title: newExamTitle });
+  };
+
+  const handleDeleteExam = () => {
+    const examId = exams?.find((exam) => exam.name === deleteExamTitle)?.id;
+    if (!examId) {
+      toast.error("삭제할 시험을 찾을 수 없습니다.");
+      return;
+    }
+    deleteExam({ examId: examId.toString() });
   };
 
   const handleSave = async () => {
@@ -195,20 +224,44 @@ export default function Editor() {
   return (
     <Layout>
       <div>
-        <h2>시험 생성</h2>
+        <h2>시험 생성 및 삭제</h2>
         <label>
-          시험 제목
+          추가할 시험 제목 :
           <input
             type="text"
             onChange={(e) => setNewExamTitle(e.target.value)}
             className="border-b"
           />
         </label>
-        <button onClick={handlePostNewExam} className="border rounded-md">
+        <button
+          onClick={handlePostNewExam}
+          className="rounded-md ml-3 mt-3 py-2 px-4 bg-violet-blue text-white text-sm"
+        >
           시험 추가
         </button>
+        <div>
+          <label>
+            삭제할 시험 제목 :
+            <select
+              onChange={(e) => setDeleteExamTitle(e.target.value)}
+              value={deleteExamTitle ?? "선택해주세요"}
+            >
+              <option disabled>선택해주세요</option>
+              {exams?.map((exam) => (
+                <option key={"examOption" + exam.id}>{exam.name}</option>
+              ))}
+            </select>
+          </label>
+          <button
+            onClick={handleDeleteExam}
+            className="rounded-md py-2 px-4  bg-red-700 text-white text-sm mx-3"
+          >
+            시험 삭제
+          </button>
+        </div>
       </div>
       <hr className="my-3" />
+      <h2>시험 수정</h2>
       <table className="table-fixed w-full">
         <thead>
           <tr>

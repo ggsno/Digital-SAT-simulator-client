@@ -2,6 +2,10 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { examState } from "../atoms/exam";
 import { moduleState } from "./Simulator.atoms";
+import { Urls } from "../pages/router";
+import { storage } from "../utils/storage";
+import { useQuery } from "react-query";
+import { fetchGetExamResults } from "../service/exam";
 
 export default function StudentHome() {
   const exam = useRecoilValue(examState);
@@ -14,8 +18,19 @@ export default function StudentHome() {
     }
   };
 
-  const TEMPgoReview = () => {
-    navigator("/review?exam-id=1");
+  const { data: examResult } = useQuery(
+    ["result"],
+    () => fetchGetExamResults({ userId: storage.get("USER_ID")! }),
+    {
+      select: ({ data: { data } }) => data,
+    }
+  );
+
+  const goReview = () => {
+    navigator(
+      Urls.review +
+        `?exam-id=${exam?.id.toString()}&user-id=${storage.get("USER_ID")}`
+    );
   };
 
   return (
@@ -34,18 +49,17 @@ export default function StudentHome() {
         )}
       </div>
       <div className="mb-4">
-        <h2 className="mb-2">Results</h2>
-        {/* {!exam ? (
+        <h2 className="mb-2">Test Results</h2>
+        {!examResult ? (
           <div className="text-xl">no results</div>
-        ) : ( */}
-        <button
-          onClick={TEMPgoReview}
-          className="bg-white rounded-md shadow-md"
-        >
-          <h3 className="bg-[#f5f7fc] font-bold w-40 p-3 text-left">temp</h3>
-          <div>View My Responses</div>
-        </button>
-        {/* )} */}
+        ) : (
+          <button onClick={goReview} className="bg-white rounded-md shadow-md">
+            <h3 className="bg-[#f5f7fc] font-bold w-40 p-3 text-left">
+              {exam?.title}
+            </h3>
+            <div>View My Responses</div>
+          </button>
+        )}
       </div>
     </>
   );

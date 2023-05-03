@@ -9,7 +9,6 @@ import {
   fetchGetExam,
   fetchGetExamResults,
 } from "../service/exam";
-import { storage } from "../utils/storage";
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {
@@ -18,10 +17,13 @@ export const loaderReview = async ({ request }: { request: Request }) => {
     const url = new URL(request.url);
     const examId = url.searchParams.get("exam-id");
     if (!examId) throw new Error("no exam id");
+    const userId = url.searchParams.get("user-id");
+    if (!userId) throw new Error("no user id");
     const resExam = await fetchGetExam({ examId });
     const resExamResults = await fetchGetExamResults({
-      userId: storage.get("USER_ID")!,
+      userId,
     });
+    if (!resExamResults.data.data) throw new Error("no exam result");
     return {
       questions: resExam.data.data.questions,
       answers: resExamResults.data.data.question_results.map(

@@ -47,7 +47,7 @@ export type GetExamAnswersResponse = ResponseProps<{
     your_answer: string;
     exam_result_id: number;
   }>;
-}>;
+} | null>;
 
 export const fetchPostExam = ({ title }: { title: string }) => {
   return serverApiInstanceWithAuth.post(`/exams`, { name: title });
