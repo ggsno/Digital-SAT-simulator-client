@@ -99,5 +99,9 @@ export default function homePage() {
     }
   }, []);
 
-  return <Layout>{user.is_teacher ? <TeacherHome /> : <StudentHome />}</Layout>;
+  return (
+    <Layout name={user.name}>
+      {user.is_teacher ? <TeacherHome /> : <StudentHome />}
+    </Layout>
+  );
 }

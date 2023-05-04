@@ -26,9 +26,9 @@ export default function Header() {
               <img
                 src="/image/home.png"
                 alt="home"
-                className="h-10 w-10 inline-block mr-2"
+                className="h-8 w-8 inline-block mr-2"
               />
-              <span>Home</span>
+              <span className="font-bold text-lg">Home</span>
             </button>
             <button
               onClick={handleLogout}

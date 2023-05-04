@@ -103,14 +103,16 @@ export default function Editor() {
   };
 
   const handleDeleteExam = () => {
-    setIsLoading(true);
-    const examId = exams?.find((exam) => exam.name === deleteExamTitle)?.id;
-    if (!examId) {
-      toast.error("삭제할 시험을 찾을 수 없습니다.");
-      setIsLoading(false);
-      return;
+    if (confirm("시험을 삭제하시겠습니까?")) {
+      setIsLoading(true);
+      const examId = exams?.find((exam) => exam.name === deleteExamTitle)?.id;
+      if (!examId) {
+        toast.error("삭제할 시험을 찾을 수 없습니다.");
+        setIsLoading(false);
+        return;
+      }
+      deleteExam({ examId: examId.toString() });
     }
-    deleteExam({ examId: examId.toString() });
   };
 
   const handleSave = async () => {
@@ -322,7 +324,6 @@ export default function Editor() {
             <td>
               <select
                 onChange={(e) => {
-                  console.log(e.target.value);
                   setCurQuestionNumber(e.target.value);
                 }}
                 value={curQuestionNumber ?? "선택해주세요"}

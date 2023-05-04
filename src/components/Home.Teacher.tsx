@@ -50,15 +50,17 @@ export default function TeacherHome() {
         return;
       }
       if (!exams) throw new Error("no exams");
-      selectedStudents.forEach(async (student) => {
-        const examId = exams.find((exam) => exam.name === selectedExam)?.id;
-        if (!examId) throw new Error("no exam id");
-        await fetchPatchAllocateExamToUser({
-          user_id: student,
-          exam_id: examId,
-        });
-      });
-      queryClient.invalidateQueries(["students"]);
+      await Promise.all(
+        selectedStudents.map(async (student) => {
+          const examId = exams.find((exam) => exam.name === selectedExam)?.id;
+          if (!examId) throw new Error("no exam id");
+          await fetchPatchAllocateExamToUser({
+            user_id: student,
+            exam_id: examId,
+          });
+        })
+      );
+      queryClient.invalidateQueries("students");
       toast.success("배정 완료");
     } catch (err) {
       toastError(err);
@@ -84,7 +86,7 @@ export default function TeacherHome() {
     setNewStudentId("");
     setNewStudentName("");
     setNewStudentPassword("");
-    queryClient.invalidateQueries(["students"]);
+    queryClient.invalidateQueries("students");
   };
 
   const deleteUser = async () => {
@@ -93,12 +95,14 @@ export default function TeacherHome() {
       return;
     }
     if (confirm(`선택된 학생 계정을 삭제하시겠습니까?`)) {
-      selectedStudents.forEach(async (student) => {
-        await fetchDeleteUser({ id: student });
-      });
+      await Promise.all(
+        selectedStudents.map(async (student) => {
+          await fetchDeleteUser({ id: student });
+        })
+      );
 
       toast.success("삭제 완료");
-      queryClient.invalidateQueries(["students"]);
+      queryClient.invalidateQueries("students");
     }
   };
 
