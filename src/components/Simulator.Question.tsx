@@ -142,7 +142,7 @@ export default function Question(props: Props) {
             className="overflow-auto w-full flex justify-center"
           >
             <div
-              className="font-question p-9 max-w-2xl [&_p]:mb-2 [&_h2]:mb-2 [&_h2]:font-bold"
+              className="font-question p-9 max-w-2xl [&_p]:mb-2 [&_h2]:mb-2 [&_h2]:font-bold h-min"
               dangerouslySetInnerHTML={{ __html: passage }}
             />
           </div>
