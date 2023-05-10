@@ -12,7 +12,7 @@ import {
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {
-    if (!isAuthentificated()) return redirect(Urls.login);
+    if (!(await isAuthentificated())) return redirect(Urls.login);
 
     const url = new URL(request.url);
     const examId = url.searchParams.get("exam-id");

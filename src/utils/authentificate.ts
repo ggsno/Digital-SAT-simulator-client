@@ -1,5 +1,13 @@
+import { fetchGetAllUsers } from "../service/user";
 import { storage } from "./storage";
 
-export default function isAuthentificated() {
-  return storage.get("ACCESS_TOKEN") && storage.get("USER_ID") ? true : false;
+export default async function isAuthentificated() {
+  try {
+    const res = await fetchGetAllUsers();
+    return (
+      res.data.data.findIndex((e) => e.id === storage.get("USER_ID")) !== -1
+    );
+  } catch (err) {
+    return false;
+  }
 }

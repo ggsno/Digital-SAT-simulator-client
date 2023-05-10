@@ -20,7 +20,7 @@ import { useEffect } from "react";
 
 export const loaderHome = async () => {
   try {
-    if (!isAuthentificated()) return redirect(Urls.login);
+    if (!(await isAuthentificated())) return redirect(Urls.login);
     const user = (
       await fetchGetUser({
         id: storage.get("USER_ID") as string,

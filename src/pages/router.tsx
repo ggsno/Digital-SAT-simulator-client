@@ -18,12 +18,13 @@ export const Urls = {
 export const router = createBrowserRouter([
   {
     path: Urls.root,
-    loader: () =>
-      !isAuthentificated() ? redirect(Urls.login) : redirect(Urls.home),
+    loader: async () =>
+      !(await isAuthentificated()) ? redirect(Urls.login) : redirect(Urls.home),
   },
   {
     path: Urls.login,
-    loader: () => (isAuthentificated() ? redirect(Urls.root) : null),
+    loader: async () =>
+      (await isAuthentificated()) ? redirect(Urls.root) : null,
     element: <Login />,
   },
   {
@@ -38,7 +39,8 @@ export const router = createBrowserRouter([
   },
   {
     path: Urls.editor,
-    loader: () => (!isAuthentificated() ? redirect(Urls.login) : null),
+    loader: async () =>
+      !(await isAuthentificated()) ? redirect(Urls.login) : null,
     element: <Editor />,
   },
   {

@@ -6,7 +6,7 @@ import { Urls } from "./router";
 import isAuthentificated from "../utils/authentificate";
 
 export const loaderExam = async () => {
-  if (!isAuthentificated()) return redirect(Urls.login);
+  if (!(await isAuthentificated())) return redirect(Urls.login);
   return null;
 };
 
