@@ -1,9 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { moduleState, questionIndexState } from "./Simulator.atoms";
 import Navigator from "./Simulator.Navigator";
-import { QUESTION_COUNT_PER_MATH, SECTION_TITLES } from "../utils/constants";
+import { useConstantValue, useIndexControl } from "./Simulator.hooks";
 
 export default function Popup({
   popupState,
@@ -13,14 +11,15 @@ export default function Popup({
   popupButtonRef: React.MutableRefObject<HTMLDivElement | null>;
 }) {
   const [isPopupOpened, setIsPopupOpened] = popupState;
-  const setQuestionIndex = useSetRecoilState(questionIndexState);
-  const module = useRecoilValue(moduleState);
-  if (!module) throw new Error("no module value at Footer component");
-  const title =
-    module.questions.length === QUESTION_COUNT_PER_MATH / 2
-      ? SECTION_TITLES[1]
-      : SECTION_TITLES[0];
+
+  const { goReviewModule } = useIndexControl();
+  const { getCurrentSectionTitle } = useConstantValue();
   const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const onClickGoReviewPage = () => {
+    setIsPopupOpened(false);
+    goReviewModule();
+  };
 
   useEffect(() => {
     const handleOutsideClose = (e: { target: any }) => {
@@ -48,7 +47,7 @@ export default function Popup({
         >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-xl grow text-center">
-              {title} Questions
+              {getCurrentSectionTitle()} Questions
             </h3>
             <button
               type="button"
@@ -85,10 +84,7 @@ export default function Popup({
           <div className="flex justify-center">
             <button
               type="button"
-              onClick={() => {
-                setIsPopupOpened(false);
-                setQuestionIndex(module.questions.length);
-              }}
+              onClick={onClickGoReviewPage}
               className="text-blue font-bold text-sm border border-blue rounded-full px-4 py-1"
             >
               Go to Review Page

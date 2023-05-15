@@ -1,89 +1,42 @@
-import { useEffect, useState } from "react";
-import {
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from "recoil";
+import { useRecoilValue } from "recoil";
 import Question from "./Simulator.Question";
 import Footer from "./Simulator.Footer";
 import Header from "./Simulator.Header";
-import {
-  questionIndexState,
-  moduleState,
-  answerState,
-  timerState,
-  moduleIndexState,
-  sectionIndexState,
-  forReviewState,
-  optionEliminatorState,
-  annotateListState,
-} from "./Simulator.atoms";
 import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
-import { examState } from "../atoms/exam";
 import Breaktime from "./Simulator.Breaktime";
+import { ExamProps } from "../service/convertDataFunctions";
+import { useIndexControl, useModule } from "./Simulator.hooks";
 
-export default function Simulator() {
-  const exam = useRecoilValue(examState);
-  if (!exam) throw new Error("no exam state");
-  const [module, setModule] = useRecoilState(moduleState);
-  const setAnswers = useSetRecoilState(answerState);
-  const questionIndex = useRecoilValue(questionIndexState);
-  const moduleIndex = useRecoilValue(moduleIndexState);
-  const sectionIndex = useRecoilValue(sectionIndexState);
+export default function Simulator({ exam }: { exam: ExamProps }) {
   const user = useRecoilValue(userState);
-  const setTimer = useSetRecoilState(timerState);
-
-  const resetReview = useResetRecoilState(forReviewState);
-  const resetOptionEliminator = useResetRecoilState(optionEliminatorState);
-  const resetAnnoateList = useResetRecoilState(annotateListState);
-
-  const [isBreaktime, setIsBreaktime] = useState(false);
-
-  useEffect(() => {
-    if (moduleIndex >= 0) {
-      const newModule = exam.sections[sectionIndex].modules[moduleIndex];
-      setModule(newModule);
-      setAnswers(Array(newModule.questions.length).fill(""));
-      resetReview();
-      resetOptionEliminator();
-      resetAnnoateList();
-      setTimer(Date.now());
-    }
-  }, [moduleIndex]);
-
-  useEffect(() => {
-    if (sectionIndex !== 0) setIsBreaktime(true);
-  }, [sectionIndex]);
+  const { index } = useIndexControl();
+  const { module } = useModule(exam);
 
   return (
     <>
       {!module ? (
-        "loading ..."
-      ) : isBreaktime ? (
-        <Breaktime setIsBreaktime={setIsBreaktime} />
+        "no module"
+      ) : index.module === -1 ? (
+        <Breaktime />
       ) : (
         <>
           <Header
-            title={`Section ${sectionIndex + 1}, Module ${moduleIndex + 1}: ${
-              exam.sections[sectionIndex].title
+            title={`Section ${index.section + 1}, Module ${index.module + 1}: ${
+              exam.sections[index.section].title
             }`}
           />
           <hr className="border-dashed border-t-2 border-gray mb-2" />
-          {questionIndex < module.questions.length ? (
+          {index.question < module.length ? (
             <Question
-              passage={module.questions[questionIndex].passage}
-              question={module.questions[questionIndex].question}
-              choices={module.questions[questionIndex].choices}
+              passage={module[index.question].passage}
+              question={module[index.question].question}
+              choices={module[index.question].choices}
             />
           ) : (
-            <Review title={exam.sections[sectionIndex].title} />
+            <Review title={exam.sections[index.section].title} />
           )}
-          <Footer
-            userName={user!.name}
-            totalQuestionCount={module.questions.length}
-          />{" "}
+          <Footer userName={user!.name} totalQuestionCount={module.length} />
         </>
       )}
     </>

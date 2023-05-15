@@ -1,12 +1,8 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  annotateRefState,
-  answerState,
-  optionEliminatorState,
-  questionIndexState,
-} from "./Simulator.atoms";
+import { optionEliminatorState } from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
 import { useEffect, useRef } from "react";
+import { useAnnotate, useIndexControl } from "./Simulator.hooks";
 
 type Props = {
   passage: string | null;
@@ -16,11 +12,13 @@ type Props = {
 
 export default function Question(props: Props) {
   const { passage, question, choices } = props;
-  const questionIndex = useRecoilValue(questionIndexState);
-  const [answers, setAnswers] = useRecoilState(answerState);
+  // const [answers, setAnswers] = useRecoilState(answerState);
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
+
+  const { index } = useIndexControl();
+  const { setAnnotateBoundary } = useAnnotate();
 
   const addAnswer = ({
     answer,
@@ -31,7 +29,7 @@ export default function Question(props: Props) {
   }) => {
     const newAnswers = answers.slice();
     newAnswers.splice(
-      questionIndex,
+      index.question,
       1,
       isMultiple
         ? convertToMultipleChoice(answer as number)
@@ -42,7 +40,7 @@ export default function Question(props: Props) {
 
   const resetAnswer = () => {
     const newAnswers = answers.slice();
-    newAnswers.splice(questionIndex, 1, "");
+    newAnswers.splice(index.question, 1, "");
     setAnswers(newAnswers);
   };
 
@@ -59,31 +57,31 @@ export default function Question(props: Props) {
     };
     switch (action) {
       case "ADD":
-        if (eliminatedOptionsList[questionIndex]) {
+        if (eliminatedOptionsList[index.question]) {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
           const newEliminatedOptions =
-            eliminatedOptionsList[questionIndex].concat(choiceIndex);
+            eliminatedOptionsList[index.question].concat(choiceIndex);
           newEliminatedOptionsList.splice(
-            questionIndex,
+            index.question,
             1,
             newEliminatedOptions
           );
           setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
-          newEliminatedOptionsList[questionIndex] = [choiceIndex];
+          newEliminatedOptionsList[index.question] = [choiceIndex];
           setEliminatedOptionsList(newEliminatedOptionsList);
         }
         break;
       case "REMOVE":
-        if (eliminatedOptionsList[questionIndex].includes(choiceIndex)) {
+        if (eliminatedOptionsList[index.question].includes(choiceIndex)) {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
 
           const newEliminatedOptions = eliminatedOptionsList[
-            questionIndex
+            index.question
           ].filter((e) => e !== choiceIndex);
 
-          newEliminatedOptionsList[questionIndex] = newEliminatedOptions;
+          newEliminatedOptionsList[index.question] = newEliminatedOptions;
 
           setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
@@ -98,34 +96,21 @@ export default function Question(props: Props) {
   const convertToMultipleChoice = (index: number) =>
     ["A", "B", "C", "D", "E"][index];
 
-  const convertFromObjectiveChoice = (choice: string | null) => {
-    switch (choice) {
-      case "A":
-        return 0;
-      case "B":
-        return 1;
-      case "C":
-        return 2;
-      case "D":
-        return 3;
-      case "E":
-        return 4;
-      default:
-        return choice;
-    }
-  };
+  const convertFromObjectiveChoice = (choice: string) =>
+    ["A", "B", "C", "D", "E"].includes(choice)
+      ? { A: 0, B: 1, C: 2, D: 3, E: 4 }[choice]
+      : choice;
 
   const isEliminatorInclude = (choiceIndex: number) =>
-    optionEliminator.eliminatedOptionsList[questionIndex]?.includes(
+    optionEliminator.eliminatedOptionsList[index.question]?.includes(
       choiceIndex
     );
 
-  const setAnnotateRef = useSetRecoilState(annotateRefState);
   const passageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (passageRef.current) {
-      setAnnotateRef(passageRef.current);
+      setAnnotateBoundary(passageRef);
     }
   }, [passageRef.current]);
 
@@ -149,7 +134,7 @@ export default function Question(props: Props) {
         )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl">
-            <Toolbox index={questionIndex} />
+            <Toolbox index={index.question} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
             <fieldset className="font-question">
@@ -159,7 +144,7 @@ export default function Question(props: Props) {
                   onChange={(e) => {
                     addAnswer({ answer: e.target.value });
                   }}
-                  value={answers[questionIndex] ?? ""}
+                  value={answers[index.question] ?? ""}
                   className="border-b"
                 />
               ) : (
@@ -173,7 +158,7 @@ export default function Question(props: Props) {
                       name="choice"
                       id={`choice${choiceIndex}`}
                       checked={
-                        convertFromObjectiveChoice(answers[questionIndex]) ===
+                        convertFromObjectiveChoice(answers[index.question]) ===
                         choiceIndex
                       }
                       onChange={() => {
@@ -228,7 +213,7 @@ export default function Question(props: Props) {
                               if (
                                 choiceIndex ===
                                 convertFromObjectiveChoice(
-                                  answers[questionIndex]
+                                  answers[index.question]
                                 )
                               )
                                 resetAnswer();

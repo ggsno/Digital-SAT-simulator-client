@@ -1,23 +1,19 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  answerState,
-  moduleState,
-  forReviewState,
-  questionIndexState,
-} from "./Simulator.atoms";
+import { useRecoilValue } from "recoil";
+import { forReviewState } from "./Simulator.atoms";
+import { useIndexControl } from "./Simulator.hooks";
 
 export default function Navigator({
   navigateCallback,
 }: {
   navigateCallback?: VoidFunction;
 }) {
-  const exam = useRecoilValue(moduleState);
   const forReview = useRecoilValue(forReviewState);
-  const answers = useRecoilValue(answerState);
-  const [questionIndex, setQuestionIndex] = useRecoilState(questionIndexState);
-  if (!exam || !forReview || !answers) throw new Error("no state : navigator");
+  if (!forReview) throw new Error("no state : navigator");
 
-  const navNumbers = Array(exam.questions.length)
+  const { index, getQuestionsLength, navigateQuestion, isAnswered } =
+    useIndexControl();
+
+  const navNumbers = Array(getQuestionsLength())
     .fill(0)
     .map((_, i) => i + 1);
 
@@ -25,39 +21,37 @@ export default function Navigator({
     return forReview.indexList.includes(index);
   };
 
-  const isAnswered = (index: number) => {
-    return answers[index] ? true : false;
-  };
-
   return (
     <>
       <div className="flex py-6 flex-wrap">
-        {navNumbers.map((number, index) => (
+        {navNumbers.map((number, navIndex) => (
           <>
             <button
               type="button"
               onClick={() => {
-                setQuestionIndex(index);
+                navigateQuestion(navIndex);
                 navigateCallback && navigateCallback();
               }}
-              key={`navitem${index}`}
+              key={`navitem${navIndex}`}
               className={`relative font-bold text-xl w-7 h-7 mr-4 mb-6 ${
-                isForReview(index) ? "after:content-[''] after:bg-black" : null
+                isForReview(navIndex)
+                  ? "after:content-[''] after:bg-black"
+                  : null
               } ${
-                isAnswered(index)
+                isAnswered(navIndex)
                   ? "bg-blue text-white"
                   : "text-blue border border-dashed border-black"
               }`}
             >
               {number}
-              {isForReview(index) && (
+              {isForReview(navIndex) && (
                 <img
                   src="image/review_icon_bgwhite.png"
                   alt="review"
                   className="absolute w-4 h-4 right-[-0.5rem] top-[-0.5rem]"
                 />
               )}
-              {questionIndex === index && (
+              {index.question === navIndex && (
                 <img
                   src="image/current.png"
                   alt="review"
