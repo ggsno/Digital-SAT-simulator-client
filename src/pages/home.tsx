@@ -54,7 +54,7 @@ export default function homePage() {
       {user.is_teacher ? (
         <TeacherHome />
       ) : (
-        <StudentHome examTitle={exam.name} />
+        <StudentHome examTitle={exam ? exam.name : null} />
       )}
     </Layout>
   );

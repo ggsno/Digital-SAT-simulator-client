@@ -7,9 +7,12 @@ import { userState } from "../atoms/user";
 import Breaktime from "./Simulator.Breaktime";
 import { ExamProps } from "../service/convertDataFunctions";
 import { useIndexControl, useModule } from "./Simulator.hooks";
+import { Navigate } from "react-router-dom";
+import { Urls } from "../pages/router";
 
 export default function Simulator({ exam }: { exam: ExamProps }) {
   const user = useRecoilValue(userState);
+  if (!user) return <Navigate to={Urls.home} />;
   const { index } = useIndexControl();
   const { module } = useModule(exam);
 
@@ -36,7 +39,7 @@ export default function Simulator({ exam }: { exam: ExamProps }) {
           ) : (
             <Review title={exam.sections[index.section].title} />
           )}
-          <Footer userName={user!.name} totalQuestionCount={module.length} />
+          <Footer userName={user.name} totalQuestionCount={module.length} />
         </>
       )}
     </>

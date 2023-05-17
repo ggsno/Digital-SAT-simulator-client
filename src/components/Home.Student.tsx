@@ -4,7 +4,11 @@ import { storage } from "../utils/storage";
 import { useQuery } from "react-query";
 import { fetchGetExamResults } from "../service/exam";
 
-export default function StudentHome({ examTitle }: { examTitle?: string }) {
+export default function StudentHome({
+  examTitle,
+}: {
+  examTitle: string | null;
+}) {
   const navigator = useNavigate();
 
   const { data: examResult } = useQuery(
