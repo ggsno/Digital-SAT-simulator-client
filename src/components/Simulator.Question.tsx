@@ -1,8 +1,8 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { optionEliminatorState } from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
 import { useEffect, useRef } from "react";
-import { useAnnotate, useIndexControl } from "./Simulator.hooks";
+import { useAnnotate, useAnswer, useIndexControl } from "./Simulator.hooks";
 
 type Props = {
   passage: string | null;
@@ -12,37 +12,13 @@ type Props = {
 
 export default function Question(props: Props) {
   const { passage, question, choices } = props;
-  // const [answers, setAnswers] = useRecoilState(answerState);
+  const { moduleAnswers, setModuleAnswer, removeModuleAnswer } = useAnswer();
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
 
   const { index } = useIndexControl();
   const { setAnnotateBoundary } = useAnnotate();
-
-  const addAnswer = ({
-    answer,
-    isMultiple,
-  }: {
-    answer: number | string;
-    isMultiple?: boolean;
-  }) => {
-    const newAnswers = answers.slice();
-    newAnswers.splice(
-      index.question,
-      1,
-      isMultiple
-        ? convertToMultipleChoice(answer as number)
-        : (answer as string)
-    );
-    setAnswers(newAnswers);
-  };
-
-  const resetAnswer = () => {
-    const newAnswers = answers.slice();
-    newAnswers.splice(index.question, 1, "");
-    setAnswers(newAnswers);
-  };
 
   const handleOptionEliminator = (
     action: "ADD" | "REMOVE",
@@ -96,11 +72,6 @@ export default function Question(props: Props) {
   const convertToMultipleChoice = (index: number) =>
     ["A", "B", "C", "D", "E"][index];
 
-  const convertFromObjectiveChoice = (choice: string) =>
-    ["A", "B", "C", "D", "E"].includes(choice)
-      ? { A: 0, B: 1, C: 2, D: 3, E: 4 }[choice]
-      : choice;
-
   const isEliminatorInclude = (choiceIndex: number) =>
     optionEliminator.eliminatedOptionsList[index.question]?.includes(
       choiceIndex
@@ -141,10 +112,10 @@ export default function Question(props: Props) {
               <legend dangerouslySetInnerHTML={{ __html: question }} />
               {!choices ? (
                 <input
-                  onChange={(e) => {
-                    addAnswer({ answer: e.target.value });
-                  }}
-                  value={answers[index.question] ?? ""}
+                  onChange={(e) =>
+                    setModuleAnswer(index.question, e.target.value)
+                  }
+                  value={moduleAnswers[index.question] ?? ""}
                   className="border-b"
                 />
               ) : (
@@ -158,11 +129,14 @@ export default function Question(props: Props) {
                       name="choice"
                       id={`choice${choiceIndex}`}
                       checked={
-                        convertFromObjectiveChoice(answers[index.question]) ===
-                        choiceIndex
+                        moduleAnswers[index.question] ===
+                        convertToMultipleChoice(choiceIndex)
                       }
                       onChange={() => {
-                        addAnswer({ answer: choiceIndex, isMultiple: true });
+                        setModuleAnswer(
+                          index.question,
+                          convertToMultipleChoice(choiceIndex)
+                        );
                         if (isEliminatorInclude(choiceIndex))
                           handleOptionEliminator("REMOVE", choiceIndex);
                       }}
@@ -211,12 +185,10 @@ export default function Question(props: Props) {
                           <button
                             onClick={() => {
                               if (
-                                choiceIndex ===
-                                convertFromObjectiveChoice(
-                                  answers[index.question]
-                                )
+                                convertToMultipleChoice(choiceIndex) ===
+                                moduleAnswers[index.question]
                               )
-                                resetAnswer();
+                                removeModuleAnswer(index.question);
                               handleOptionEliminator("ADD", choiceIndex);
                             }}
                             className={`font-main border border-gray-dark rounded-full \

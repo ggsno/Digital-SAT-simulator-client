@@ -135,6 +135,32 @@ export const useIndexControl = () => {
   };
 };
 
+export const useAnswer = () => {
+  const [answer, setAnswer] = useRecoilState(answerState);
+
+  const setModuleAnswer = (index: number, newAnswer: string) => {
+    const newModuleAnswer = answer.module.slice();
+    newModuleAnswer.splice(index, 1, newAnswer);
+    setAnswer({
+      ...answer,
+      module: newModuleAnswer,
+    });
+  };
+
+  const removeModuleAnswer = (index: number) => {
+    const newModuleAnswer = answer.module.slice();
+    newModuleAnswer.splice(index, 1, "");
+    setAnswer({
+      ...answer,
+      module: newModuleAnswer,
+    });
+  };
+
+  const moduleAnswers = answer.module;
+
+  return { moduleAnswers, setModuleAnswer, removeModuleAnswer };
+};
+
 export const useModule = (exam: ExamProps) => {
   const [index, setIndex] = useRecoilState(indexState);
 
@@ -192,6 +218,7 @@ export const useModule = (exam: ExamProps) => {
 
   useEffect(() => {
     const result = { ...index };
+    if (result.question === 0) return;
 
     if (index.question > questionLength) {
       result.question = 0;
@@ -207,7 +234,7 @@ export const useModule = (exam: ExamProps) => {
       postResult();
       return;
     }
-    setIndex(result);
+    if (result.question === 0) setIndex(result);
   }, [index]);
 
   return { module };
