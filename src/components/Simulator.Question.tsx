@@ -134,7 +134,7 @@ export default function Question(props: Props) {
       <div
         className={`${
           passage ? "grid grid-cols-2" : null
-        } h-[calc(100vh_-_173px)]`}
+        } h-[calc(100vh_-_186px)]`}
       >
         {passage && (
           <div
@@ -181,7 +181,7 @@ export default function Question(props: Props) {
                         if (isEliminatorInclude(choiceIndex))
                           handleOptionEliminator("REMOVE", choiceIndex);
                       }}
-                      className={`peer sr-only`}
+                      className={`peer hidden`}
                     />
                     <label
                       className={`grow flex p-2 w-full break-all items-center hover:cursor-pointer rounded-md border
