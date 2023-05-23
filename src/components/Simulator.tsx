@@ -6,7 +6,11 @@ import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
 import Breaktime from "./Simulator.Breaktime";
 import { ExamProps } from "../service/convertDataFunctions";
-import { useIndexControl, useModule } from "./Simulator.hooks";
+import {
+  useEffectAnnotateInit,
+  useIndexControl,
+  useModule,
+} from "./Simulator.hooks";
 import { Navigate } from "react-router-dom";
 import { Urls } from "../pages/router";
 
@@ -15,6 +19,8 @@ export default function Simulator({ exam }: { exam: ExamProps }) {
   if (!user) return <Navigate to={Urls.home} />;
   const { index } = useIndexControl();
   const { module } = useModule(exam);
+
+  useEffectAnnotateInit();
 
   return (
     <>

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { GraphingCalculator } from "desmos-react";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
-import { useAnnotate } from "./Simulator.hooks";
+import { useAnnotateToolbox } from "./Simulator.hooks";
 
 export default function Toolbox() {
-  const { annotate, onClickAnnotate, isDescendantOfSelection } = useAnnotate();
+  const { annotate, annotateButtonRef, isDescendantOfSelection } =
+    useAnnotateToolbox();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const onClickCalculator = () => {
@@ -18,7 +19,7 @@ export default function Toolbox() {
       >
         <button
           type="button"
-          onClick={onClickAnnotate}
+          ref={annotateButtonRef}
           onTouchStart={(event) => {
             if (isDescendantOfSelection(event.target)) {
               event.preventDefault();

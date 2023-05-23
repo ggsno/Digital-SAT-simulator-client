@@ -49,7 +49,7 @@ const moduleState = atom<QuestionProps[]>({
 const annotateState = atom<{
   list: AnnotateProps[];
   current: AnnotateProps | null;
-  boundary: React.RefObject<HTMLDivElement | null> | null;
+  boundary: HTMLDivElement | null;
 }>({
   key: "Annotate",
   default: {
@@ -240,76 +240,96 @@ export const useModule = (exam: ExamProps) => {
   return { module };
 };
 
+export const useAnnotateToolbox = () => {
+  const [module, setModule] = useRecoilState(moduleState);
+  const [annotate, setAnnotate] = useRecoilState(annotateState);
+  const { question: questionIndex } = useRecoilValue(indexState);
+  const annotateButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const isDescendantOfSelection = (target: any) => {
+    const range = document.getSelection()?.getRangeAt(0);
+    const container = range?.commonAncestorContainer;
+    return container?.contains(target);
+  };
+
+  useEffect(() => {
+    const onClickAnnotate = () => {
+      const NO_SELECT = "no select";
+      try {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount <= 0 || selection.isCollapsed)
+          throw NO_SELECT;
+        const range = selection.getRangeAt(selection.rangeCount - 1);
+        const container = range.commonAncestorContainer as HTMLElement;
+        if (
+          !annotateButtonRef.current ||
+          !annotate.boundary?.contains(container)
+        )
+          throw NO_SELECT;
+
+        const newId = Date.now().toString();
+        const newSpan = document.createElement("span");
+        newSpan.id = newId;
+        newSpan.classList.add(
+          "custom_highlight",
+          "bg-yellow",
+          "border-b",
+          "border-dashed",
+          "hover:bg-yellow-dark"
+        );
+        const newAnnotate = {
+          id: newId,
+          selectedText: selection.toString(),
+          comment: "",
+          ref: newSpan,
+        };
+        setAnnotate({
+          ...annotate,
+          current: newAnnotate,
+          list: [...annotate.list, newAnnotate],
+        });
+        range.surroundContents(newSpan);
+
+        setModule([
+          ...module,
+          ...module.map((question, i) =>
+            i !== questionIndex
+              ? question
+              : {
+                  ...question,
+                  passage: annotate.boundary!.innerHTML.replace(
+                    /^<div.*?>|<\/div>$/g,
+                    ""
+                  ),
+                }
+          ),
+        ]);
+      } catch (err) {
+        if (err === NO_SELECT) {
+          alert("MAKE A SELECTION FIRST");
+          return;
+        }
+        alert(err);
+        throw err;
+      }
+    };
+    if (annotateButtonRef.current && annotate.boundary)
+      annotateButtonRef.current.addEventListener("click", onClickAnnotate);
+
+    return () =>
+      annotateButtonRef.current?.removeEventListener("click", onClickAnnotate);
+  }, [annotateButtonRef, annotate.boundary]);
+  return {
+    annotate,
+    annotateButtonRef,
+    isDescendantOfSelection,
+  };
+};
+
 export const useAnnotate = () => {
   const [module, setModule] = useRecoilState(moduleState);
-  const { question: questionIndex } = useRecoilValue(indexState);
-  const selectionRef = useRef<Selection | null>(null);
   const [annotate, setAnnotate] = useRecoilState(annotateState);
-
-  const setAnnotateBoundary = (
-    ref: React.MutableRefObject<HTMLDivElement | null>
-  ) => {
-    setAnnotate({ ...annotate, boundary: ref });
-  };
-
-  const onClickAnnotate = () => {
-    try {
-      const selection = selectionRef.current;
-      const range = selection?.getRangeAt(selection.rangeCount - 1);
-      const container = range?.commonAncestorContainer as HTMLElement;
-      if (
-        !selection ||
-        !container ||
-        !range ||
-        !annotate.boundary?.current?.contains(container) ||
-        selection.isCollapsed
-      ) {
-        alert("MAKE A SELECTION FIRST");
-        return;
-      }
-
-      const newId = Date.now().toString();
-      const newSpan = document.createElement("span");
-      newSpan.id = newId;
-      newSpan.classList.add(
-        "custom_highlight",
-        "bg-yellow",
-        "border-b",
-        "border-dashed",
-        "hover:bg-yellow-dark"
-      );
-      const newAnnotate = {
-        id: newId,
-        selectedText: selection.toString(),
-        comment: "",
-        ref: newSpan,
-      };
-      setAnnotate({
-        ...annotate,
-        current: newAnnotate,
-        list: [...annotate.list, newAnnotate],
-      });
-      range.surroundContents(newSpan);
-
-      setModule([
-        ...module,
-        ...module.map((question, i) =>
-          i !== questionIndex
-            ? question
-            : {
-                ...question,
-                passage: annotate.boundary!.current!.innerHTML.replace(
-                  /^<div.*?>|<\/div>$/g,
-                  ""
-                ),
-              }
-        ),
-      ]);
-    } catch (err) {
-      alert(err);
-      throw err;
-    }
-  };
+  const { question: questionIndex } = useRecoilValue(indexState);
 
   const saveAnnotate = (newComment: string) => {
     setAnnotate({
@@ -355,57 +375,45 @@ export const useAnnotate = () => {
     setAnnotate({ ...annotate, current: null });
   };
 
-  const isDescendantOfSelection = (target: any) => {
-    const range = document.getSelection()?.getRangeAt(0);
-    const container = range?.commonAncestorContainer;
-    return container?.contains(target);
+  const setAnnotateBoundary = (element: HTMLDivElement) => {
+    setAnnotate({ ...annotate, boundary: element });
   };
+
+  return {
+    annotate,
+    saveAnnotate,
+    deleteAnnotate,
+    closeAnnotate,
+    setAnnotateBoundary,
+  };
+};
+
+export const useEffectAnnotateInit = () => {
+  const { question: questionIndex } = useRecoilValue(indexState);
+  const [annotate, setAnnotate] = useRecoilState(annotateState);
 
   useEffect(() => {
     const highlightElements = document.querySelectorAll(".custom_highlight");
 
-    const removeListener = [...highlightElements].map((element) => {
-      const callback = () => {
-        setAnnotate({
-          ...annotate,
-          current: {
-            id: element.id,
-            selectedText: element.textContent ?? "",
-            comment: "",
-          },
-        });
-      };
-      element.addEventListener("click", callback);
-      return () => element.removeEventListener("click", callback);
-    });
-
-    return () => removeListener.forEach((remove) => remove());
-  }, [annotate.list, questionIndex]);
-
-  useEffect(() => {
-    const callback = () => {
-      const selectionNow = window.getSelection();
-      if (
-        selectionNow &&
-        selectionNow.rangeCount > 0 &&
-        !selectionNow.isCollapsed
-      ) {
-        selectionRef.current = selectionNow;
+    const annotateEventListenerRemovers = [...highlightElements].map(
+      (element) => {
+        const setCurrentAnnotate = () => {
+          setAnnotate({
+            ...annotate,
+            current: {
+              id: element.id,
+              selectedText: element.textContent ?? "",
+              comment: "",
+            },
+          });
+        };
+        element.addEventListener("click", setCurrentAnnotate);
+        return () => element.removeEventListener("click", setCurrentAnnotate);
       }
-    };
-    document.addEventListener("selectionchange", callback);
-    return () => document.removeEventListener("selectionchange", callback);
-  }, []);
+    );
 
-  return {
-    annotate,
-    setAnnotateBoundary,
-    onClickAnnotate,
-    saveAnnotate,
-    deleteAnnotate,
-    closeAnnotate,
-    isDescendantOfSelection,
-  };
+    return () => annotateEventListenerRemovers.forEach((remove) => remove());
+  }, [annotate.list, questionIndex]);
 };
 
 export const useTimer = () => {

@@ -1,8 +1,13 @@
 import { useRecoilState } from "recoil";
 import { optionEliminatorState } from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
+import {
+  useAnnotate,
+  useAnnotateToolbox,
+  useAnswer,
+  useIndexControl,
+} from "./Simulator.hooks";
 import { useEffect, useRef } from "react";
-import { useAnnotate, useAnswer, useIndexControl } from "./Simulator.hooks";
 
 type Props = {
   passage: string | null;
@@ -18,7 +23,9 @@ export default function Question(props: Props) {
   );
 
   const { index } = useIndexControl();
-  const { setAnnotateBoundary } = useAnnotate();
+  const { setAnnotateBoundary, annotate } = useAnnotate();
+
+  const annotateBoundaryRef = useRef(null);
 
   const handleOptionEliminator = (
     action: "ADD" | "REMOVE",
@@ -77,13 +84,14 @@ export default function Question(props: Props) {
       choiceIndex
     );
 
-  const passageRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (annotateBoundaryRef.current)
+      setAnnotateBoundary(annotateBoundaryRef.current);
+  }, [annotateBoundaryRef]);
 
   useEffect(() => {
-    if (passageRef.current) {
-      setAnnotateBoundary(passageRef);
-    }
-  }, [passageRef.current]);
+    console.log(annotate.list);
+  }, [index, annotate]);
 
   return (
     <>
@@ -94,7 +102,7 @@ export default function Question(props: Props) {
       >
         {passage && (
           <div
-            ref={passageRef}
+            ref={annotateBoundaryRef}
             className="overflow-auto w-full flex justify-center"
           >
             <div
