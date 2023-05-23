@@ -148,7 +148,7 @@ export default function Question(props: Props) {
           </div>
         )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
-          <div className="my-0 mx-auto max-w-2xl">
+          <div className="my-0 mx-auto max-w-2xl h-min">
             <Toolbox index={questionIndex} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
