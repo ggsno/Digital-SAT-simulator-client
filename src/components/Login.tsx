@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { storage } from "../utils/storage";
 import { toastError } from "../utils/toastError";
-import { fetchPostLogin } from "../service/user";
 import { Urls } from "../pages/router";
+import { fetchPostLogin } from "../service/apis/user";
 
 export default function Login() {
   const [id, setId] = useState("");

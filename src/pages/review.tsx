@@ -4,11 +4,8 @@ import ReviewTable from "../components/ReviewTable";
 import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";
 import Layout from "../components/Layout";
-import {
-  GetExamResponse,
-  fetchGetExam,
-  fetchGetExamResults,
-} from "../service/apis/exam";
+import { fetchGetExam, fetchGetExamResults } from "../service/apis/exam";
+import { GetExamResponse } from "../service/apis/exam.type";
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {

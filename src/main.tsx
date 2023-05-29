@@ -6,6 +6,9 @@ import { Toaster } from "react-hot-toast";
 import { router } from "./pages/router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Loading from "./components/Loading";
+import initMocks from "../mocks";
+
+if (import.meta.env.DEV) initMocks();
 
 export const queryClient = new QueryClient();
 

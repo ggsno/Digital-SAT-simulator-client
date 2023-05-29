@@ -1,4 +1,4 @@
-export type ResponseProps<Data> = {
+type ResponseProps<Data> = {
   result: boolean;
   message: string;
   data: Data;
