@@ -8,6 +8,14 @@ export const users = [
     exam_id: null,
   },
   {
+    id: "dev",
+    password: "dev",
+    name: "dev",
+    phone: "010-1234-5678",
+    is_teacher: false,
+    exam_id: 18,
+  },
+  {
     id: "student01",
     password: "student01",
     name: "Gildong Hong",

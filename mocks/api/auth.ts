@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { users } from "../mockDB/users";
-import { response } from "./responseWrapper";
+import { response } from "./common";
 
 const authApi = [
   rest.post(

@@ -3,3 +3,5 @@ export const response = (data: any) => ({
   message: "OK",
   data,
 });
+
+export const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api`;

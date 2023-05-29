@@ -4,7 +4,7 @@ type ResponseProps<Data> = {
   data: Data;
 };
 
-export type User = {
+export type UserProps = {
   id: string;
   password: string;
   name: string;
@@ -13,11 +13,11 @@ export type User = {
 };
 
 export type GetAllUsersResponse = ResponseProps<
-  Array<User & { exam_id: number }>
+  Array<UserProps & { exam_id: number }>
 > & { count: number };
 
 export type GetUserResponse = ResponseProps<
-  User & {
+  UserProps & {
     exam_id: number | null;
     exam: {
       id: number;

@@ -89,10 +89,6 @@ export default function Question(props: Props) {
       setAnnotateBoundary(annotateBoundaryRef.current);
   }, [annotateBoundaryRef]);
 
-  useEffect(() => {
-    console.log(annotate.list);
-  }, [index, annotate]);
-
   return (
     <>
       <div

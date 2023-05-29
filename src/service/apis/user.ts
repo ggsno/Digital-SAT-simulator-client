@@ -2,13 +2,13 @@ import {
   serverApiInstance,
   serverApiInstanceWithAuth,
 } from "../axiosInstances";
-import { GetAllUsersResponse, GetUserResponse, User } from "./user.type";
+import { GetAllUsersResponse, GetUserResponse, UserProps } from "./user.type";
 
 export const fetchPostLogin = (props: { id: string; password: string }) => {
   return serverApiInstance.post(`/auth/login`, props);
 };
 
-export const fetchPostUser = (props: User) => {
+export const fetchPostUser = (props: UserProps) => {
   return serverApiInstanceWithAuth.post(`/users`, props);
 };
 
