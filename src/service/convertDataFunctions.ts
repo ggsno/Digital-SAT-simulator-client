@@ -3,7 +3,7 @@ import {
   QUESTION_COUNT_PER_READING_AND_WRITING,
   SECTION_TITLES,
 } from "../utils/constants";
-import { GetExamResponse } from "./exam";
+import { GetExamResponse } from "./apis/exam.type";
 
 export type ExamProps = {
   id: number;

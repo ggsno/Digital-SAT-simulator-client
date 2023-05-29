@@ -13,7 +13,7 @@ import {
   fetchGetExam,
   fetchPostExam,
   fetchPutQuestion,
-} from "../service/exam";
+} from "../service/apis/exam";
 import {
   QUESTION_COUNT_PER_MATH,
   QUESTION_COUNT_PER_READING_AND_WRITING,

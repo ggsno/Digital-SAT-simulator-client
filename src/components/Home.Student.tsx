@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Urls } from "../pages/router";
 import { storage } from "../utils/storage";
 import { useQuery } from "react-query";
-import { fetchGetExamResults } from "../service/exam";
+import { fetchGetExamResults } from "../service/apis/exam";
 
 export default function StudentHome({
   examTitle,

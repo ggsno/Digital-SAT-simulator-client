@@ -8,9 +8,11 @@ import { toastError } from "../utils/toastError";
 import Layout from "../components/Layout";
 import TeacherHome from "../components/Home.Teacher";
 import StudentHome from "../components/Home.Student";
-import { GetUserResponse, fetchGetUser } from "../service/user";
-import { GetExamResponse, fetchGetExam } from "../service/exam";
+import { fetchGetUser } from "../service/apis/user";
+import { fetchGetExam } from "../service/apis/exam";
 import { useEffect } from "react";
+import { GetUserResponse } from "../service/apis/user.type";
+import { GetExamResponse } from "../service/apis/exam.type";
 
 export const loaderHome = async () => {
   try {

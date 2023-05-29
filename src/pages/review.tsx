@@ -8,7 +8,7 @@ import {
   GetExamResponse,
   fetchGetExam,
   fetchGetExamResults,
-} from "../service/exam";
+} from "../service/apis/exam";
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {

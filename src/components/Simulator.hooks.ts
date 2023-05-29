@@ -5,7 +5,7 @@ import {
   useResetRecoilState,
   useSetRecoilState,
 } from "recoil";
-import { fetchPostExamResults } from "../service/exam";
+import { fetchPostExamResults } from "../service/apis/exam";
 import { Urls } from "../pages/router";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";

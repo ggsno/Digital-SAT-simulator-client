@@ -2,9 +2,9 @@ import { redirect, useLoaderData } from "react-router-dom";
 import Simulator from "../components/Simulator";
 import { Urls } from "./router";
 import isAuthentificated from "../utils/authentificate";
-import { fetchGetUser } from "../service/user";
+import { fetchGetUser } from "../service/apis/user";
 import { storage } from "../utils/storage";
-import { fetchGetExam } from "../service/exam";
+import { fetchGetExam } from "../service/apis/exam";
 import { toastError } from "../utils/toastError";
 import { ExamProps, convertExam } from "../service/convertDataFunctions";
 

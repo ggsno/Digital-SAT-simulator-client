@@ -6,8 +6,8 @@ import {
   fetchPostUser,
   fetchPatchAllocateExamToUser,
   fetchDeleteUser,
-} from "../service/user";
-import { fetchGetAllExams, fetchGetExamResults } from "../service/exam";
+} from "../service/apis/user";
+import { fetchGetAllExams, fetchGetExamResults } from "../service/apis/exam";
 import { toast } from "react-hot-toast";
 import { useQuery, useQueryClient } from "react-query";
 import { toastError } from "../utils/toastError";
