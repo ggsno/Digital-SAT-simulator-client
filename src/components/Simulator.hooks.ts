@@ -163,13 +163,6 @@ export const useAnswer = () => {
 
 export const useModule = (exam: ExamProps) => {
   const [index, setIndex] = useRecoilState(indexState);
-
-  const [sectionLength, moduleLength, questionLength] = [
-    exam.sections.length,
-    exam.sections[index.module].modules.length,
-    exam.sections[index.section].modules[index.module].questions.length,
-  ];
-
   /** TODO: 로딩 컴포넌트 분리 */
   const setLoading = useSetRecoilState(loadingState);
   const [answer, setAnswer] = useRecoilState(answerState);
@@ -197,14 +190,40 @@ export const useModule = (exam: ExamProps) => {
   };
 
   useEffect(() => {
-    if (index.module >= 0) {
+    if (index.module === -1) return;
+
+    const sectionLength = exam.sections.length;
+    if (index.section >= sectionLength) {
+      postResult();
+      return;
+    }
+    const moduleLength = exam.sections[index.section].modules.length;
+    if (index.module >= moduleLength) {
+      setIndex({ section: index.section + 1, module: -1, question: 0 });
+      return;
+    }
+    const questionLength =
+      exam.sections[index.section].modules[index.module].questions.length;
+    if (index.question >= questionLength) {
+      setIndex({ ...index, module: index.module + 1, question: 0 });
+    }
+  }, [index]);
+
+  useEffect(() => {
+    const sectionLength = exam.sections.length;
+    if (index.section >= sectionLength) {
+      return;
+    }
+    const moduleLength = exam.sections[index.section].modules.length;
+
+    if (0 <= index.module && index.module < moduleLength) {
       const newModule =
         exam.sections[index.section].modules[index.module].questions;
       setModule(newModule);
       resetReview();
       resetOptionEliminator();
       resetAnnoateList();
-      setAnswer({ ...answer, module: Array(questionLength).fill("") });
+      setAnswer({ ...answer, module: Array(newModule.length).fill("") });
       setExamTime({
         startTime: Date.now(),
         timeLimit:
@@ -217,27 +236,6 @@ export const useModule = (exam: ExamProps) => {
     }
     setLoading(false);
   }, [index.module]);
-
-  useEffect(() => {
-    const result = { ...index };
-    if (result.question === 0) return;
-
-    if (index.question > questionLength) {
-      result.question = 0;
-      result.module++;
-    }
-    if (index.module >= moduleLength) {
-      result.question = 0;
-      /** break time module index = -1 */
-      result.module = -1;
-      result.section++;
-    }
-    if (index.section >= sectionLength) {
-      postResult();
-      return;
-    }
-    if (result.question === 0) setIndex(result);
-  }, [index]);
 
   return { module };
 };
