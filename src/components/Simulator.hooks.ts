@@ -60,11 +60,11 @@ const annotateState = atom<{
 });
 
 export const examTimeState = atom<{
-  startTime: number | null;
-  endTime: number | null;
+  startTime: number;
+  timeLimit: number;
 }>({
   key: "ExamTime",
-  default: { startTime: null, endTime: null },
+  default: { startTime: 0, timeLimit: 0 },
 });
 
 export const useIndexControl = () => {
@@ -117,7 +117,7 @@ export const useIndexControl = () => {
   };
 
   const timeout = () => {
-    toast.success("시간 초과");
+    toast.success("제한 시간이 초과되어 다음 모듈로 이동했습니다.");
     goNextModule();
   };
 
@@ -207,10 +207,12 @@ export const useModule = (exam: ExamProps) => {
       setAnswer({ ...answer, module: Array(questionLength).fill("") });
       setExamTime({
         startTime: Date.now(),
-        endTime:
+        timeLimit:
           (index.section === 0
             ? MODULE_TIME_READING_AND_WRITING_MINUTE
-            : MODULE_TIME_MATH_MINUTE) * 60,
+            : MODULE_TIME_MATH_MINUTE) *
+          60 *
+          1000,
       });
     }
     setLoading(false);
@@ -417,10 +419,9 @@ export const useEffectAnnotateInit = () => {
 };
 
 export const useTimer = () => {
-  const { startTime, endTime } = useRecoilValue(examTimeState);
-  if (!startTime || !endTime) throw new Error("no exam time");
+  const { startTime, timeLimit } = useRecoilValue(examTimeState);
   const { timeout } = useIndexControl();
-  const [time, setTime] = useState(endTime);
+  const [remainingSeconds, setRemainingSeconds] = useState(timeLimit);
   const [isTimeHidden, setIsTimeHidden] = useState(false);
 
   const toggleTimeHidden = () => {
@@ -428,18 +429,22 @@ export const useTimer = () => {
   };
 
   const getTime = () =>
-    `${Math.floor(time / 60 >= 0 ? time / 60 : 0)
+    `${Math.floor(remainingSeconds / 60 >= 0 ? remainingSeconds / 60 : 0)
       .toString()
-      .padStart(2, "0")}:${(time % 60).toString().padStart(2, "0")}`;
+      .padStart(2, "0")}:${(remainingSeconds % 60)
+      .toString()
+      .padStart(2, "0")}`;
 
   useEffect(() => {
     const callback = () => {
-      if (startTime) {
-        setTime(Math.ceil((startTime + endTime * 1000 - Date.now()) / 1000));
-      }
-      if (startTime !== null && startTime + endTime * 1000 - Date.now() < 0) {
-        clearInterval(timer);
-        timeout();
+      if (startTime !== 0) {
+        const remainingTime = startTime + timeLimit - Date.now();
+        if (remainingTime > 0) {
+          setRemainingSeconds(Math.ceil(remainingTime / 1000));
+        } else {
+          clearInterval(timer);
+          timeout();
+        }
       }
     };
     const timer = setInterval(callback, 1000);

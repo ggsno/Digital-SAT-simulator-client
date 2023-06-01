@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "../src/styles/global.css";
 import "tailwindcss/tailwind.css";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const preview: Preview = {
       <RecoilRoot>
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
+            <Toaster />
             <Story />
           </QueryClientProvider>
         </BrowserRouter>
