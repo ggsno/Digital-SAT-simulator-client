@@ -3,6 +3,7 @@ export const examResults = [
     id: 1,
     user_id: "dev",
     exam_id: 18,
+    exam_name: "dev",
     question_results: [
       {
         id: 1,

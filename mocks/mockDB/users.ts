@@ -5,7 +5,7 @@ export const users = [
     name: "관리자",
     phone: "010-1234-5678",
     is_teacher: true,
-    exam_id: null,
+    exams: null,
   },
   {
     id: "dev",
@@ -13,7 +13,7 @@ export const users = [
     name: "dev",
     phone: "010-1234-5678",
     is_teacher: false,
-    exam_id: 18,
+    exams: [{ id: 18, name: "dev" }],
   },
   {
     id: "student01",
@@ -21,7 +21,7 @@ export const users = [
     name: "Gildong Hong",
     phone: "010-1234-5678",
     is_teacher: false,
-    exam_id: 1,
+    exams: [],
   },
   {
     id: "student02",
@@ -29,7 +29,7 @@ export const users = [
     name: "김기덕",
     phone: "010-1234-5678",
     is_teacher: false,
-    exam_id: 2,
+    exams: [],
   },
   {
     id: "student03",
@@ -37,6 +37,6 @@ export const users = [
     name: "이창동",
     phone: "010-1234-5678",
     is_teacher: false,
-    exam_id: 1,
+    exams: [],
   },
 ];

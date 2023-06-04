@@ -3,20 +3,8 @@ import { exams } from "../mockDB/exams";
 import { BACKEND_URL, response } from "./common";
 
 const examApi = [
-  rest.get(`${BACKEND_URL}/exams/:id`, async (req, res, ctx) => {
-    const { id } = req.params;
-    const exam = exams.find((e) => e.id === Number(id));
-    return res(ctx.json(response(exam)));
-  }),
-  rest.get(`${BACKEND_URL}/exams`, async (_, res, ctx) => {
-    const result = exams.map((exam) => ({
-      id: exam.id,
-      name: exam.name,
-    }));
-    return res(ctx.json({ ...response(result), count: result.length }));
-  }),
   rest.post(`${BACKEND_URL}/exams`, async (req, res, ctx) => {
-    const { name } = await req.json();
+    const { name } = (await req.json()) as { name: string };
     const newId = exams.length + 1;
 
     const initiateQuestion = (
@@ -54,33 +42,53 @@ const examApi = [
     });
     return res(ctx.status(201));
   }),
+  rest.get(`${BACKEND_URL}/exams`, async (_, res, ctx) => {
+    const result = exams.map((exam) => ({
+      id: exam.id,
+      name: exam.name,
+    }));
+    return res(ctx.json({ ...response(result), count: result.length }));
+  }),
+  rest.get(`${BACKEND_URL}/exams/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const exam = exams.find((e) => e.id === Number(id));
+    return res(ctx.json(response(exam)));
+  }),
+  rest.delete(`${BACKEND_URL}/exams/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const index = exams.findIndex((e) => e.id === Number(id));
+    exams.splice(index, 1);
+    return res(ctx.status(301));
+  }),
   rest.put(
-    `${BACKEND_URL}/exams/:examId/:sectionTitle/:moduleNumber/:questionNumber`,
+    `${BACKEND_URL}/exam/:examId/:sectionTitle/:moduleNumber/:questionNumber`,
     async (req, res, ctx) => {
       const { examId, sectionTitle, moduleNumber, questionNumber } = req.params;
-      const sectionNumber = sectionTitle === "Reading and Writing" ? 0 : 1;
-      const { data } = await req.json();
+      const body = await req.json();
 
       const examIndex = exams.findIndex(({ id }) => id === Number(examId));
       if (examIndex === -1) return res(ctx.status(404));
 
-      const questionIndex = exams[Number(examId)].questions.findIndex(
+      const questionIndex = exams[examIndex].questions.findIndex(
         (e) =>
           e.module === Number(moduleNumber) &&
-          e.section === sectionTitle &&
+          e.section.toLowerCase() === (sectionTitle as string).toLowerCase() &&
           e.number === Number(questionNumber)
       );
       if (questionIndex === -1) return res(ctx.status(404));
 
+      console.log(body);
       const question = {
-        ...data,
+        ...body,
         id: Date.now(),
         section: sectionTitle,
-        module: moduleNumber,
-        exam_id: examId,
+        module: Number(moduleNumber),
+        exam_id: Number(examId),
+        number: Number(questionNumber),
       };
 
       exams[examIndex].questions[questionIndex] = question;
+      console.log(exams[examIndex]);
 
       return res(ctx.status(201));
     }
