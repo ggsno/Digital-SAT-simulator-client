@@ -92,8 +92,8 @@ export default function Question(props: Props) {
   return (
     <>
       <div
-        className={`${
-          passage ? "grid grid-cols-2" : null
+        className={`grid ${
+          passage ? "grid-cols-2" : null
         } h-[calc(100vh_-_186px)]`}
       >
         {passage && (
