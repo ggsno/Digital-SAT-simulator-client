@@ -1,4 +1,4 @@
-import { fetchGetAllUsers } from "../service/user";
+import { fetchGetAllUsers } from "../service/apis/user";
 import { storage } from "./storage";
 
 export default async function isAuthentificated() {
