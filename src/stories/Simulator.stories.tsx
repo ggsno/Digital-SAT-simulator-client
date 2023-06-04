@@ -11,7 +11,6 @@ const MockSimulator = () => {
     id: "temp",
     name: "temp",
     isTeacher: false,
-    examId: 14,
   });
 
   return <Simulator exam={convertExam(exams[0])} />;
