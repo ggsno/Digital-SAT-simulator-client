@@ -73,7 +73,7 @@ export const useIndexControl = () => {
 
   const accumulateAnswer = () => {
     setAnswer({
-      ...answer,
+      module: [],
       accumulator: [...answer.accumulator, ...answer.module],
     });
     toast.success("임시 저장되었습니다.");
@@ -103,7 +103,6 @@ export const useIndexControl = () => {
     setIndex({ ...index, question: 0, module: index.module + 1 });
   };
   const goNextSection = () => {
-    accumulateAnswer();
     setIndex({
       ...index,
       question: 0,
@@ -162,6 +161,7 @@ export const useAnswer = () => {
 };
 
 export const useModule = (exam: ExamProps) => {
+  const { goNextModule, goNextSection } = useIndexControl();
   const [index, setIndex] = useRecoilState(indexState);
   /** TODO: 로딩 컴포넌트 분리 */
   const setLoading = useSetRecoilState(loadingState);
@@ -190,22 +190,21 @@ export const useModule = (exam: ExamProps) => {
   };
 
   useEffect(() => {
-    if (index.module === -1) return;
-
     const sectionLength = exam.sections.length;
     if (index.section >= sectionLength) {
       postResult();
       return;
     }
+    if (index.module === -1) return;
     const moduleLength = exam.sections[index.section].modules.length;
     if (index.module >= moduleLength) {
-      setIndex({ section: index.section + 1, module: -1, question: 0 });
+      goNextSection();
       return;
     }
     const questionLength =
       exam.sections[index.section].modules[index.module].questions.length;
-    if (index.question >= questionLength) {
-      setIndex({ ...index, module: index.module + 1, question: 0 });
+    if (index.question > questionLength) {
+      goNextModule();
     }
   }, [index]);
 

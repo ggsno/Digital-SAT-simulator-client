@@ -10,18 +10,14 @@ export type UserProps = {
   name: string;
   phone: string;
   is_teacher: boolean;
+  exams: Array<{
+    id: number;
+    name: string;
+  }> | null;
 };
 
-export type GetAllUsersResponse = ResponseProps<
-  Array<UserProps & { exam_id: number }>
-> & { count: number };
+export type GetAllUsersResponse = ResponseProps<Array<UserProps>> & {
+  count: number;
+};
 
-export type GetUserResponse = ResponseProps<
-  UserProps & {
-    exam_id: number | null;
-    exam: {
-      id: number;
-      name: string;
-    } | null;
-  }
->;
+export type GetUserResponse = ResponseProps<UserProps>;

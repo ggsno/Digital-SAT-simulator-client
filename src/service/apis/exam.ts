@@ -1,7 +1,8 @@
 import {
+  GetAllExamResultsResponse,
   GetAllExamsResponse,
   GetExamResponse,
-  GetExamAnswersResponse,
+  GetExamResultsResponse,
   PutExamRequest,
 } from "./exam.type";
 
@@ -35,8 +36,14 @@ export const fetchPostExamResults = (props: { answers: string[] }) => {
   return serverApiInstanceWithAuth.post(`/exam-results`, props);
 };
 
-export const fetchGetExamResults = ({ userId }: { userId: string }) => {
-  return serverApiInstanceWithAuth.get<GetExamAnswersResponse>(
-    `/exam-results/${userId}`
+export const fetchGetExamResults = ({ resultId }: { resultId: number }) => {
+  return serverApiInstanceWithAuth.get<GetExamResultsResponse>(
+    `/exam-results/${resultId}`
+  );
+};
+
+export const fetchGetAllExamResults = ({ userId }: { userId: string }) => {
+  return serverApiInstanceWithAuth.get<GetAllExamResultsResponse>(
+    `/exam-results/users/${userId}`
   );
 };

@@ -32,7 +32,7 @@ export type GetExamResponse = ResponseProps<{
   questions: Array<QuestionProps>;
 }>;
 
-export type GetExamAnswersResponse = ResponseProps<{
+export type GetExamResultsResponse = ResponseProps<{
   id: number;
   user_id: string;
   exam_id: number;
@@ -44,10 +44,28 @@ export type GetExamAnswersResponse = ResponseProps<{
   }>;
 } | null>;
 
+export type GetAllExamResultsResponse = ResponseProps<
+  Array<{
+    id: number;
+    user_id: string;
+    exam_id: number;
+    exam_name: string;
+  }>
+>;
+
 export type PutExamRequest = {
   examId: number;
   sectionTitle: string;
   moduleNumber: number;
   questionNumber: number;
-  body: Omit<QuestionProps, "id" | "section" | "module" | "number" | "exam_id">;
+  body: Pick<
+    QuestionProps,
+    | "passage"
+    | "content"
+    | "choice_A"
+    | "choice_B"
+    | "choice_C"
+    | "choice_D"
+    | "correct_answer"
+  >;
 };

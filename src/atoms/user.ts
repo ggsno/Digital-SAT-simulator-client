@@ -4,7 +4,6 @@ type UserProps = {
   id: string;
   name: string;
   isTeacher: boolean;
-  examId: number | null;
 };
 
 export const userState = atom<UserProps | null>({

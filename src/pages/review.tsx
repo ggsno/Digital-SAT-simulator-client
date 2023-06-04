@@ -12,10 +12,10 @@ export const loaderReview = async ({ request }: { request: Request }) => {
     if (!isAuthentificated()) return redirect(Urls.login);
 
     const url = new URL(request.url);
-    const userId = url.searchParams.get("user-id");
-    if (!userId) throw new Error("no user id");
+    const resultId = url.searchParams.get("result-id");
+    if (!resultId) throw new Error("no user id");
     const resExamResults = await fetchGetExamResults({
-      userId,
+      resultId: Number(resultId),
     });
     if (!resExamResults.data.data) throw new Error("no exam result");
     const resExam = await fetchGetExam({

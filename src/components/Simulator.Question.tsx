@@ -94,7 +94,7 @@ export default function Question(props: Props) {
       <div
         className={`${
           passage ? "grid grid-cols-2" : null
-        } h-[calc(100vh_-_173px)]`}
+        } h-[calc(100vh_-_186px)]`}
       >
         {passage && (
           <div
@@ -108,7 +108,7 @@ export default function Question(props: Props) {
           </div>
         )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
-          <div className="my-0 mx-auto max-w-2xl">
+          <div className="my-0 mx-auto max-w-2xl h-min">
             <Toolbox index={index.question} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
@@ -144,7 +144,7 @@ export default function Question(props: Props) {
                         if (isEliminatorInclude(choiceIndex))
                           handleOptionEliminator("REMOVE", choiceIndex);
                       }}
-                      className={`peer sr-only`}
+                      className={`peer hidden`}
                     />
                     <label
                       className={`grow flex p-2 w-full break-all items-center hover:cursor-pointer rounded-md border
