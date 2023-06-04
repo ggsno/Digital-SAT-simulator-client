@@ -4,26 +4,23 @@ import ReviewTable from "../components/ReviewTable";
 import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";
 import Layout from "../components/Layout";
-import {
-  GetExamResponse,
-  fetchGetExam,
-  fetchGetExamResults,
-} from "../service/exam";
+import { fetchGetExam, fetchGetExamResults } from "../service/apis/exam";
+import { GetExamResponse } from "../service/apis/exam.type";
 
 export const loaderReview = async ({ request }: { request: Request }) => {
   try {
     if (!(await isAuthentificated())) return redirect(Urls.login);
 
     const url = new URL(request.url);
-    const examId = url.searchParams.get("exam-id");
-    if (!examId) throw new Error("no exam id");
-    const userId = url.searchParams.get("user-id");
-    if (!userId) throw new Error("no user id");
-    const resExam = await fetchGetExam({ examId });
+    const resultId = url.searchParams.get("result-id");
+    if (!resultId) throw new Error("no user id");
     const resExamResults = await fetchGetExamResults({
-      userId,
+      resultId: Number(resultId),
     });
     if (!resExamResults.data.data) throw new Error("no exam result");
+    const resExam = await fetchGetExam({
+      examId: resExamResults.data.data.exam_id.toString(),
+    });
     return {
       questions: resExam.data.data.questions,
       answers: resExamResults.data.data.question_results.map(

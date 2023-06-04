@@ -1,11 +1,12 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  annotateRefState,
-  answerState,
-  optionEliminatorState,
-  questionIndexState,
-} from "./Simulator.atoms";
+import { useRecoilState } from "recoil";
+import { optionEliminatorState } from "./Simulator.atoms";
 import Toolbox from "./Simulator.Question.Toolbox";
+import {
+  useAnnotate,
+  useAnnotateToolbox,
+  useAnswer,
+  useIndexControl,
+} from "./Simulator.hooks";
 import { useEffect, useRef } from "react";
 
 type Props = {
@@ -16,35 +17,15 @@ type Props = {
 
 export default function Question(props: Props) {
   const { passage, question, choices } = props;
-  const questionIndex = useRecoilValue(questionIndexState);
-  const [answers, setAnswers] = useRecoilState(answerState);
+  const { moduleAnswers, setModuleAnswer, removeModuleAnswer } = useAnswer();
   const [optionEliminator, setOptionEliminator] = useRecoilState(
     optionEliminatorState
   );
 
-  const addAnswer = ({
-    answer,
-    isMultiple,
-  }: {
-    answer: number | string;
-    isMultiple?: boolean;
-  }) => {
-    const newAnswers = answers.slice();
-    newAnswers.splice(
-      questionIndex,
-      1,
-      isMultiple
-        ? convertToMultipleChoice(answer as number)
-        : (answer as string)
-    );
-    setAnswers(newAnswers);
-  };
+  const { index } = useIndexControl();
+  const { setAnnotateBoundary, annotate } = useAnnotate();
 
-  const resetAnswer = () => {
-    const newAnswers = answers.slice();
-    newAnswers.splice(questionIndex, 1, "");
-    setAnswers(newAnswers);
-  };
+  const annotateBoundaryRef = useRef(null);
 
   const handleOptionEliminator = (
     action: "ADD" | "REMOVE",
@@ -59,31 +40,31 @@ export default function Question(props: Props) {
     };
     switch (action) {
       case "ADD":
-        if (eliminatedOptionsList[questionIndex]) {
+        if (eliminatedOptionsList[index.question]) {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
           const newEliminatedOptions =
-            eliminatedOptionsList[questionIndex].concat(choiceIndex);
+            eliminatedOptionsList[index.question].concat(choiceIndex);
           newEliminatedOptionsList.splice(
-            questionIndex,
+            index.question,
             1,
             newEliminatedOptions
           );
           setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
-          newEliminatedOptionsList[questionIndex] = [choiceIndex];
+          newEliminatedOptionsList[index.question] = [choiceIndex];
           setEliminatedOptionsList(newEliminatedOptionsList);
         }
         break;
       case "REMOVE":
-        if (eliminatedOptionsList[questionIndex].includes(choiceIndex)) {
+        if (eliminatedOptionsList[index.question].includes(choiceIndex)) {
           const newEliminatedOptionsList = eliminatedOptionsList.slice();
 
           const newEliminatedOptions = eliminatedOptionsList[
-            questionIndex
+            index.question
           ].filter((e) => e !== choiceIndex);
 
-          newEliminatedOptionsList[questionIndex] = newEliminatedOptions;
+          newEliminatedOptionsList[index.question] = newEliminatedOptions;
 
           setEliminatedOptionsList(newEliminatedOptionsList);
         } else {
@@ -98,36 +79,15 @@ export default function Question(props: Props) {
   const convertToMultipleChoice = (index: number) =>
     ["A", "B", "C", "D", "E"][index];
 
-  const convertFromObjectiveChoice = (choice: string | null) => {
-    switch (choice) {
-      case "A":
-        return 0;
-      case "B":
-        return 1;
-      case "C":
-        return 2;
-      case "D":
-        return 3;
-      case "E":
-        return 4;
-      default:
-        return choice;
-    }
-  };
-
   const isEliminatorInclude = (choiceIndex: number) =>
-    optionEliminator.eliminatedOptionsList[questionIndex]?.includes(
+    optionEliminator.eliminatedOptionsList[index.question]?.includes(
       choiceIndex
     );
 
-  const setAnnotateRef = useSetRecoilState(annotateRefState);
-  const passageRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
-    if (passageRef.current) {
-      setAnnotateRef(passageRef.current);
-    }
-  }, [passageRef.current]);
+    if (annotateBoundaryRef.current)
+      setAnnotateBoundary(annotateBoundaryRef.current);
+  }, [annotateBoundaryRef]);
 
   return (
     <>
@@ -138,7 +98,7 @@ export default function Question(props: Props) {
       >
         {passage && (
           <div
-            ref={passageRef}
+            ref={annotateBoundaryRef}
             className="overflow-auto w-full flex justify-center"
           >
             <div
@@ -149,17 +109,17 @@ export default function Question(props: Props) {
         )}
         <div className="border-l-4 border-gray p-9 w-full overflow-auto">
           <div className="my-0 mx-auto max-w-2xl h-min">
-            <Toolbox index={questionIndex} />
+            <Toolbox index={index.question} />
             <hr className="border-t-2 border-dashed border-gray mb-2" />
 
             <fieldset className="font-question">
               <legend dangerouslySetInnerHTML={{ __html: question }} />
               {!choices ? (
                 <input
-                  onChange={(e) => {
-                    addAnswer({ answer: e.target.value });
-                  }}
-                  value={answers[questionIndex] ?? ""}
+                  onChange={(e) =>
+                    setModuleAnswer(index.question, e.target.value)
+                  }
+                  value={moduleAnswers[index.question] ?? ""}
                   className="border-b"
                 />
               ) : (
@@ -173,11 +133,14 @@ export default function Question(props: Props) {
                       name="choice"
                       id={`choice${choiceIndex}`}
                       checked={
-                        convertFromObjectiveChoice(answers[questionIndex]) ===
-                        choiceIndex
+                        moduleAnswers[index.question] ===
+                        convertToMultipleChoice(choiceIndex)
                       }
                       onChange={() => {
-                        addAnswer({ answer: choiceIndex, isMultiple: true });
+                        setModuleAnswer(
+                          index.question,
+                          convertToMultipleChoice(choiceIndex)
+                        );
                         if (isEliminatorInclude(choiceIndex))
                           handleOptionEliminator("REMOVE", choiceIndex);
                       }}
@@ -226,12 +189,10 @@ export default function Question(props: Props) {
                           <button
                             onClick={() => {
                               if (
-                                choiceIndex ===
-                                convertFromObjectiveChoice(
-                                  answers[questionIndex]
-                                )
+                                convertToMultipleChoice(choiceIndex) ===
+                                moduleAnswers[index.question]
                               )
-                                resetAnswer();
+                                removeModuleAnswer(index.question);
                               handleOptionEliminator("ADD", choiceIndex);
                             }}
                             className={`font-main border border-gray-dark rounded-full \

@@ -1,19 +1,9 @@
-import { useSetRecoilState } from "recoil";
-import { moduleIndexState } from "./Simulator.atoms";
 import { useEffect, useState } from "react";
+import { useIndexControl } from "./Simulator.hooks";
 
-export default function Breaktime({
-  setIsBreaktime,
-}: {
-  setIsBreaktime: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const setModuleIndex = useSetRecoilState(moduleIndexState);
+export default function Breaktime() {
+  const { goNextModule } = useIndexControl();
   const [time, setTime] = useState(60 * 10);
-
-  const resumeTesting = () => {
-    setModuleIndex(0);
-    setIsBreaktime(false);
-  };
 
   useEffect(() => {
     const startTime = Date.now();
@@ -25,7 +15,7 @@ export default function Breaktime({
       }
       if (startTime !== null && startTime + endTime * 1000 - Date.now() < 0) {
         clearInterval(timer);
-        resumeTesting();
+        goNextModule();
       }
     };
     const timer = setInterval(callback, 1000);
@@ -47,7 +37,7 @@ export default function Breaktime({
             </div>
           </div>
           <button
-            onClick={resumeTesting}
+            onClick={goNextModule}
             className="bg-yellow-dark text-black rounded-full py-2 px-4 font-bold mt-7"
           >
             Resume Testing

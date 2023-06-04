@@ -1,0 +1,42 @@
+export const users = [
+  {
+    id: "admin",
+    password: "admin",
+    name: "관리자",
+    phone: "010-1234-5678",
+    is_teacher: true,
+    exams: null,
+  },
+  {
+    id: "dev",
+    password: "dev",
+    name: "dev",
+    phone: "010-1234-5678",
+    is_teacher: false,
+    exams: [{ id: 18, name: "dev" }],
+  },
+  {
+    id: "student01",
+    password: "student01",
+    name: "Gildong Hong",
+    phone: "010-1234-5678",
+    is_teacher: false,
+    exams: [],
+  },
+  {
+    id: "student02",
+    password: "student02",
+    name: "김기덕",
+    phone: "010-1234-5678",
+    is_teacher: false,
+    exams: [],
+  },
+  {
+    id: "student03",
+    password: "student03",
+    name: "이창동",
+    phone: "010-1234-5678",
+    is_teacher: false,
+    exams: [],
+  },
+];

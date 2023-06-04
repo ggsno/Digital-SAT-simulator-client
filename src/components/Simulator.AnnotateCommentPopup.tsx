@@ -1,68 +1,17 @@
 import { useState, useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  annotateCurrentState,
-  annotateListState,
-  moduleState,
-  questionIndexState,
-} from "./Simulator.atoms";
+import { useAnnotate } from "./Simulator.hooks";
 
-export default function AnnotateCommentPopup({
-  closePopup,
-}: {
-  closePopup: VoidFunction;
-}) {
-  const [annotateCurrent, setAnnotateCurrent] =
-    useRecoilState(annotateCurrentState);
-  if (!annotateCurrent) throw new Error("no annotate current state");
-  const [annotateList, setAnnotateList] = useRecoilState(annotateListState);
-  const [module, setModule] = useRecoilState(moduleState);
-  const questionIndex = useRecoilValue(questionIndexState);
-  if (!module) throw new Error("no module state");
-  const { id, selectedText, comment } = annotateCurrent;
-  const [newComment, setNewComment] = useState(comment);
+export default function AnnotateCommentPopup() {
+  const { annotate, saveAnnotate, deleteAnnotate, closeAnnotate } =
+    useAnnotate();
 
-  const handleSave = () => {
-    setAnnotateCurrent(null);
-    setAnnotateList(
-      annotateList.map((annotate) =>
-        annotate.id !== annotateCurrent.id
-          ? annotate
-          : {
-              ...annotate,
-              comment: newComment,
-            }
-      )
-    );
-    closePopup();
-  };
-
-  const handleDelete = () => {
-    setAnnotateCurrent(null);
-    setAnnotateList(annotateList.filter((annotate) => annotate.id !== id));
-
-    const reg = new RegExp(
-      `<span\\s+id\\s*=\\s*["']\\s*${id}\\s*["']\\s+class\\s*=\\s*["'].*?\\bcustom_highlight\\b.*?["']\\s*>(.*?)<\/span>`
-    );
-
-    setModule({
-      ...module,
-      questions: module.questions.map((question, i) =>
-        i !== questionIndex
-          ? question
-          : {
-              ...question,
-              passage: question.passage!.replace(reg, "$1"),
-            }
-      ),
-    });
-
-    closePopup();
-  };
+  const [newComment, setNewComment] = useState(annotate.current?.comment ?? "");
 
   useEffect(() => {
-    setNewComment(annotateList.find((e) => e.id === id)?.comment ?? "");
-  }, [selectedText]);
+    setNewComment(
+      annotate.list.find((e) => e.id === annotate.current?.id)?.comment ?? ""
+    );
+  }, [annotate.current?.selectedText]);
 
   return (
     <>
@@ -70,9 +19,10 @@ export default function AnnotateCommentPopup({
         <div className="flex justify-center bg-[#231d24] text-white">
           <div className="max-w-[102rem] flex justify-between py-2 px-10 grow">
             <div>
-              <span className="font-bold">View/Edit:</span>"{selectedText}"
+              <span className="font-bold">View/Edit:</span>"
+              {annotate.current?.selectedText}"
             </div>
-            <button onClick={closePopup} className="font-bold">
+            <button onClick={closeAnnotate} className="font-bold">
               CLOSE{" "}
               <img src="image/exit-white.png" className="inline-block w-5" />
             </button>
@@ -96,14 +46,14 @@ export default function AnnotateCommentPopup({
             <div className="flex">
               <button
                 type="button"
-                onClick={handleSave}
+                onClick={() => saveAnnotate(newComment)}
                 className="text-white bg-blue py-2 px-6 rounded-full mr-12"
               >
                 Save
               </button>
               <button
                 type="button"
-                onClick={handleDelete}
+                onClick={deleteAnnotate}
                 className=" text-red-700 hover:underline"
               >
                 <img src="image/delete.png" className="inline-block w-4 mr-2" />
