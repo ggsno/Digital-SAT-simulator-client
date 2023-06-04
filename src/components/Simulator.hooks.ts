@@ -180,6 +180,7 @@ export const useModule = (exam: ExamProps) => {
   const postResult = async () => {
     setLoading(true);
     await fetchPostExamResults({
+      exam_id: exam.id,
       answers: [...answer.accumulator, ...answer.module],
     });
     setLoading(false);

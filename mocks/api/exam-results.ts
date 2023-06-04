@@ -29,12 +29,15 @@ const examResultsApi = [
     return res(ctx.json({ ...response(result) }));
   }),
   rest.post(`${BACKEND_URL}/exam-results`, async (req, res, ctx) => {
-    const { answers } = (await req.json()) as { answers: string[] };
+    const { answers, exam_id } = (await req.json()) as {
+      answers: string[];
+      exam_id: number;
+    };
 
     const newExamResults = {
       id: Date.now(),
       user_id: "dev",
-      exam_id: 18,
+      exam_id,
       exam_name: "dev",
       question_results: answers.map((answer, i) => ({
         id: i,

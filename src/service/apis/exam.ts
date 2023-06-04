@@ -32,7 +32,10 @@ export const fetchPutQuestion = (props: PutExamRequest) => {
   );
 };
 
-export const fetchPostExamResults = (props: { answers: string[] }) => {
+export const fetchPostExamResults = (props: {
+  exam_id: number;
+  answers: string[];
+}) => {
   return serverApiInstanceWithAuth.post(`/exam-results`, props);
 };
 
