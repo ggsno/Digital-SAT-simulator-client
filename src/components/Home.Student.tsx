@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Urls } from "../pages/router";
+import { Urls } from "../pages/Urls";
 import { UserProps } from "../service/apis/user.type";
 import { GetAllExamResultsResponse } from "../service/apis/exam.type";
 

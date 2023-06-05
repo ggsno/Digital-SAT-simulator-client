@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { storage } from "../utils/storage";
-import { Urls } from "../pages/router";
+import { Urls } from "../pages/Urls";
 
 export default function Header() {
   const navigator = useNavigate();

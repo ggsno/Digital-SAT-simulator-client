@@ -1,6 +1,6 @@
 import { redirect, useLoaderData } from "react-router-dom";
 import Simulator from "../components/Simulator";
-import { Urls } from "./router";
+import { Urls } from "./Urls";
 import isAuthentificated from "../utils/authentificate";
 import { fetchGetExam } from "../service/apis/exam";
 import { toastError } from "../utils/toastError";

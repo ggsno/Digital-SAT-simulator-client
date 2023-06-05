@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Urls } from "../pages/router";
+import { Urls } from "../pages/Urls";
 import AddStudentForm from "./Home.Teacher.AddStudentForm";
 import StudentTable from "./Home.Teacher.StudentTable";
 

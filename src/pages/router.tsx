@@ -5,15 +5,7 @@ import isAuthentificated from "../utils/authentificate";
 import Login from "../components/Login";
 import Editor from "../components/Editor";
 import ReviewPage, { loaderReview } from "./review";
-
-export const Urls = {
-  root: "/",
-  login: "/login",
-  home: "/home",
-  exam: "/exam",
-  editor: "/editor",
-  review: "/review",
-};
+import { Urls } from "./Urls";
 
 export const router = createBrowserRouter([
   {

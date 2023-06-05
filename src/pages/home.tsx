@@ -1,6 +1,6 @@
 import { useSetRecoilState } from "recoil";
 import { redirect, useLoaderData } from "react-router-dom";
-import { Urls } from "./router";
+import { Urls } from "./Urls";
 import { userState } from "../atoms/user";
 import { storage } from "../utils/storage";
 import isAuthentificated from "../utils/authentificate";

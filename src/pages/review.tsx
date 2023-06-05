@@ -1,5 +1,5 @@
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
-import { Urls } from "./router";
+import { Urls } from "./Urls";
 import ReviewTable from "../components/ReviewTable";
 import isAuthentificated from "../utils/authentificate";
 import { toastError } from "../utils/toastError";

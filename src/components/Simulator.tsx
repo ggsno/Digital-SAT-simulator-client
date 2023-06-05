@@ -12,7 +12,7 @@ import {
   useModule,
 } from "./Simulator.hooks";
 import { Navigate } from "react-router-dom";
-import { Urls } from "../pages/router";
+import { Urls } from "../pages/Urls";
 
 export default function Simulator({ exam }: { exam: ExamProps }) {
   const user = useRecoilValue(userState);
@@ -45,7 +45,7 @@ export default function Simulator({ exam }: { exam: ExamProps }) {
           ) : (
             <Review title={exam.sections[index.section].title} />
           )}
-          <Footer userName={user.name} totalQuestionCount={module.length} />
+          <Footer userName={user!.name} totalQuestionCount={module.length} />
         </>
       )}
     </>

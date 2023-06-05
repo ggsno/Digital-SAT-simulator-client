@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { storage } from "../utils/storage";
 import { toastError } from "../utils/toastError";
-import { Urls } from "../pages/router";
+import { Urls } from "../pages/Urls";
 import { fetchPostLogin } from "../service/apis/user";
 
 export default function Login() {
