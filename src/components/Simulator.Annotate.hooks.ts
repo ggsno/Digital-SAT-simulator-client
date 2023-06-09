@@ -36,71 +36,63 @@ export const useAnnotateToolbox = () => {
 
   useEffect(() => {
     const onClickAnnotate = () => {
-      const NO_SELECT = "no select";
-      try {
-        const selection = window.getSelection();
-        if (!selection || selection.rangeCount <= 0 || selection.isCollapsed)
-          throw NO_SELECT;
-        const range = selection.getRangeAt(selection.rangeCount - 1);
-        const container = range.commonAncestorContainer as HTMLElement;
-        if (
-          // !annotateButtonRef.current ||
-          !annotate.boundary?.contains(container)
-        )
-          throw NO_SELECT;
-
-        const newId = Date.now().toString();
-        const newSpan = document.createElement("span");
-        newSpan.id = newId;
-        newSpan.classList.add(
-          "custom_highlight",
-          "bg-yellow",
-          "border-b",
-          "border-dashed",
-          "hover:bg-yellow-dark"
-        );
-        range.surroundContents(newSpan);
-
-        const newAnnotate = {
-          id: newId,
-          selectedText: selection.toString(),
-          comment: "",
-        };
-        setAnnotate({
-          ...annotate,
-          current: newAnnotate,
-          list: [...annotate.list, newAnnotate],
-        });
-
-        // setModule([
-        //   ...module,
-        //   ...module.map((question, i) =>
-        //     i !== questionIndex
-        //       ? question
-        //       : {
-        //           ...question,
-        //           passage: annotate.boundary!.innerHTML.replace(
-        //             /^<div.*?>|<\/div>$/g,
-        //             ""
-        //           ),
-        //         }
-        //   ),
-        // ]);
-      } catch (err) {
-        if (err === NO_SELECT) {
-          alert("MAKE A SELECTION FIRST");
-          return;
-        }
-        alert(err);
-        throw err;
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount <= 0 || selection.isCollapsed) {
+        alert("Make a selection first.");
+        return;
       }
+      const range = selection.getRangeAt(selection.rangeCount - 1);
+      const container = range.commonAncestorContainer as HTMLElement;
+      if (!annotate.boundary?.contains(container)) {
+        alert("The selection must be within the passage area.");
+        return;
+      }
+
+      const newId = Date.now().toString();
+      const highlightArea = document.createElement("span");
+      highlightArea.id = newId;
+      highlightArea.classList.add(
+        "custom_highlight",
+        "bg-yellow",
+        "border-b",
+        "border-dashed",
+        "hover:bg-yellow-dark"
+      );
+
+      range.surroundContents(highlightArea);
+
+      const highlightedPassageWithoutContainer =
+        annotate.boundary!.innerHTML.replace(/^<div.*?>|<\/div>$/g, "");
+
+      const newAnnotate = {
+        id: newId,
+        selectedText: selection.toString(),
+        comment: "",
+      };
+
+      setAnnotate({
+        ...annotate,
+        current: newAnnotate,
+        list: [...annotate.list, newAnnotate],
+      });
+
+      setModule([
+        ...module.map((question, i) =>
+          i !== questionIndex
+            ? question
+            : {
+                ...question,
+                passage: highlightedPassageWithoutContainer,
+              }
+        ),
+      ]);
     };
     if (annotateButtonRef.current && annotate.boundary)
       annotateButtonRef.current.addEventListener("click", onClickAnnotate);
 
     return () =>
       annotateButtonRef.current?.removeEventListener("click", onClickAnnotate);
-  }, [annotateButtonRef, annotate.boundary]);
+  }, [annotateButtonRef, annotate.boundary, annotate.list, questionIndex]);
   return {
     annotate,
     annotateButtonRef,
