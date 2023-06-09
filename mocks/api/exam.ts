@@ -77,7 +77,6 @@ const examApi = [
       );
       if (questionIndex === -1) return res(ctx.status(404));
 
-      console.log(body);
       const question = {
         ...body,
         id: Date.now(),
@@ -88,7 +87,6 @@ const examApi = [
       };
 
       exams[examIndex].questions[questionIndex] = question;
-      console.log(exams[examIndex]);
 
       return res(ctx.status(201));
     }

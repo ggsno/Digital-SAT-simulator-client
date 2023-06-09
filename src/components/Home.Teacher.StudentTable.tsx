@@ -67,10 +67,6 @@ export default function StudentTable() {
     }
   };
 
-  useEffect(() => {
-    console.log(students);
-  }, [students]);
-
   return (
     <>
       <div className="bg-white shadow-md rounded-md w-min py-3 px-5 mb-5">
