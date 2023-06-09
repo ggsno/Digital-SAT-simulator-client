@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Urls } from "../pages/Urls";
 import { UserProps } from "../service/apis/user.type";
 import { GetAllExamResultsResponse } from "../service/apis/exam.type";
+import { useSetRecoilState } from "recoil";
+import { loadingState } from "../atoms/loading";
 
 export default function StudentHome(props: {
   exams: UserProps["exams"];
@@ -9,9 +11,11 @@ export default function StudentHome(props: {
 }) {
   const { exams, examResults } = props;
   const navigator = useNavigate();
+  const setLoading = useSetRecoilState(loadingState);
 
   const startExam = (examId: number) => {
     if (confirm("시험을 시작하시겠습니까?")) {
+      setLoading(true);
       navigator(Urls.exam + `?id=${examId}`);
     }
   };

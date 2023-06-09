@@ -5,6 +5,9 @@ import isAuthentificated from "../utils/authentificate";
 import { fetchGetExam } from "../service/apis/exam";
 import { toastError } from "../utils/toastError";
 import { ExamProps, convertExam } from "../service/convertDataFunctions";
+import { useSetRecoilState } from "recoil";
+import { loadingState } from "../atoms/loading";
+import { useEffect } from "react";
 
 export const loaderExam = async ({ request }: { request: Request }) => {
   try {
@@ -23,6 +26,10 @@ export const loaderExam = async ({ request }: { request: Request }) => {
 
 export default function ExamPage() {
   const exam = useLoaderData() as ExamProps;
+  const setLoading = useSetRecoilState(loadingState);
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   return (
     <>
