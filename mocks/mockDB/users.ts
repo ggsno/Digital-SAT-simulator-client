@@ -24,12 +24,12 @@ export const users = [
     exams: [],
   },
   {
-    id: "student02",
-    password: "student02",
+    id: "qq",
+    password: "qq",
     name: "김기덕",
     phone: "010-1234-5678",
     is_teacher: false,
-    exams: [],
+    exams: [{ id: 13, name: "set 1" }],
   },
   {
     id: "student03",
