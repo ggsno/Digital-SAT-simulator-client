@@ -13,7 +13,7 @@ const MockSimulator = () => {
     isTeacher: false,
   });
 
-  return <Simulator exam={convertExam(exams[0])} />;
+  return <Simulator exam={convertExam(exams[1])} />;
 };
 
 const meta = {
