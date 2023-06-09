@@ -1,3 +1,5 @@
+import "suneditor/dist/css/suneditor.min.css";
+import "katex/dist/katex.min.css";
 import { useRecoilValue } from "recoil";
 import Question from "./Simulator.Question";
 import Footer from "./Simulator.Footer";
