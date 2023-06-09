@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GraphingCalculator } from "desmos-react";
 import AnnotateCommentPopup from "./Simulator.AnnotateCommentPopup";
-import { useAnnotateToolbox } from "./Simulator.hooks";
+import { useAnnotateToolbox } from "./Simulator.Annotate.hooks";
 
 export default function Toolbox() {
   const { annotate, annotateButtonRef, isDescendantOfSelection } =

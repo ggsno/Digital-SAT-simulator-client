@@ -31,3 +31,8 @@ export const timerState = atom<number | null>({
   key: "Timer",
   default: null,
 });
+
+export const indexState = atom({
+  key: "Index",
+  default: { section: 0, module: 0, question: 0 },
+});

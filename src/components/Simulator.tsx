@@ -6,13 +6,10 @@ import Review from "./Simulator.Review";
 import { userState } from "../atoms/user";
 import Breaktime from "./Simulator.Breaktime";
 import { ExamProps } from "../service/convertDataFunctions";
-import {
-  useEffectAnnotateInit,
-  useIndexControl,
-  useModule,
-} from "./Simulator.hooks";
+import { useIndexControl, useModule } from "./Simulator.hooks";
 import { Navigate } from "react-router-dom";
 import { Urls } from "../pages/Urls";
+import { useEffectAnnotateInit } from "./Simulator.Annotate.hooks";
 
 export default function Simulator({ exam }: { exam: ExamProps }) {
   const user = useRecoilValue(userState);

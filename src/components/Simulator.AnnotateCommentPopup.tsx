@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAnnotate } from "./Simulator.hooks";
+import { useAnnotate } from "./Simulator.Annotate.hooks";
 
 export default function AnnotateCommentPopup() {
   const { annotate, saveAnnotate, deleteAnnotate, closeAnnotate } =
