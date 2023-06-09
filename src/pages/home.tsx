@@ -16,7 +16,7 @@ import { GetAllExamResultsResponse } from "../service/apis/exam.type";
 
 export const loaderHome = async () => {
   try {
-    if (!isAuthentificated()) return redirect(Urls.login);
+    if (!(await isAuthentificated())) return redirect(Urls.login);
     const userId = storage.get("USER_ID") as string;
     const user = (
       await fetchGetUser({

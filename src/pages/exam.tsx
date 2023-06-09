@@ -8,7 +8,7 @@ import { ExamProps, convertExam } from "../service/convertDataFunctions";
 
 export const loaderExam = async ({ request }: { request: Request }) => {
   try {
-    if (!isAuthentificated()) return redirect(Urls.login);
+    if (!(await isAuthentificated())) return redirect(Urls.login);
     const url = new URL(request.url);
     const examId = url.searchParams.get("id");
     if (!examId) throw new Error("no exam id");
