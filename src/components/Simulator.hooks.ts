@@ -223,6 +223,7 @@ export const useModule = (exam: ExamProps) => {
 
 export const useTimer = () => {
   const { startTime, timeLimit } = useRecoilValue(examTimeState);
+  const answer = useRecoilState(answerState);
   const { timeout } = useIndexControl();
   const [remainingSeconds, setRemainingSeconds] = useState(timeLimit);
   const [isTimeHidden, setIsTimeHidden] = useState(false);
@@ -252,7 +253,7 @@ export const useTimer = () => {
     };
     const timer = setInterval(callback, 1000);
     return () => clearInterval(timer);
-  }, [startTime]);
+  }, [startTime, answer]);
 
   return { isTimeHidden, toggleTimeHidden, getTime };
 };
