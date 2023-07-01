@@ -66,7 +66,7 @@ export default function Login() {
         </form>
       </div>
       <div className="mt-2 text-sm text-gray">
-        Last updated 2023.06.23 16:10
+        Last updated 2023.07.02 07:42
       </div>
     </div>
   );

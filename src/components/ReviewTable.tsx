@@ -81,13 +81,39 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
       if (isSortAscending) {
         setFilteredReviews(
           filteredReviews
-            .sort((a, b) => (a.yourAnswer < b.yourAnswer ? 1 : -1))
+            .sort((a, b) =>
+              a.yourAnswer === a.correctAnswer &&
+              b.yourAnswer === b.correctAnswer &&
+              a.number < b.number
+                ? -1
+                : a.yourAnswer === a.correctAnswer &&
+                  b.yourAnswer === b.correctAnswer &&
+                  a.number > b.number
+                ? 1
+                : a.yourAnswer === a.correctAnswer &&
+                  b.yourAnswer !== b.correctAnswer
+                ? -1
+                : 1
+            )
             .slice()
         );
       } else {
         setFilteredReviews(
           filteredReviews
-            .sort((a, b) => (a.yourAnswer > b.yourAnswer ? 1 : -1))
+            .sort((a, b) =>
+              a.yourAnswer !== a.correctAnswer &&
+              b.yourAnswer !== b.correctAnswer &&
+              a.number < b.number
+                ? -1
+                : a.yourAnswer !== a.correctAnswer &&
+                  b.yourAnswer !== b.correctAnswer &&
+                  a.number > b.number
+                ? 1
+                : a.yourAnswer !== a.correctAnswer &&
+                  b.yourAnswer === b.correctAnswer
+                ? -1
+                : 1
+            )
             .slice()
         );
       }
@@ -244,11 +270,12 @@ export default function ReviewTable({ reviews }: { reviews: ReviewProps[] }) {
                   }`}
                 >
                   {yourAnswer}
-                  {yourAnswer === ""
+                  {"; "}
+                  {yourAnswer === "" && correctAnswer !== ""
                     ? "Omitted"
                     : yourAnswer === correctAnswer
-                    ? "; Correct"
-                    : "; Incorrect"}
+                    ? "Correct"
+                    : "Incorrect"}
                 </td>
                 <td>
                   <button
